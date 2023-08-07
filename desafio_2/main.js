@@ -1,127 +1,133 @@
-//importar el modulo fs para trabajar con sistema de archivos
-//import fs from 'fs'; 
-//const fs = require('fs');
-import { promises } from 'fs';
-
-class ProductManager {
-  constructor(path) {
-    this.path = path;
-    this.idContador = 1;
-    this.productos = [];
-
-    // Al iniciar la instancia, se debe leer el archivo si existe y cargar los productos en memoria
-    this._readFile();
-  }
-
-  async _readFile() {
-    try {
-      const data = await promises.readFile(this.path, 'utf8');
-      if (data) {
-        this.productos = JSON.parse(data);
-        this.idContador = Math.max(...this.productos.map((product) => product.id)) + 1;
-      }
-    } catch (err) {
-      // Si el archivo no existe o hay algún error, se asume que el archivo está vacío o no tiene el formato correcto
-      console.error('Error while reading file:', err.message);
-      console.error('Assuming an empty file or incorrect format. Starting with an empty list of products.');
-      this.productos = [];
-      this.idContador = 1;
+import { promises as fs } from 'fs'
+class ProductManager{
+    constructor(path){
+    
+    this.path=path
+    this.products=[]
     }
-  }
-
-  async _writeFile() {
-    try {
-      await promises.writeFile(this.path, JSON.stringify(this.productos, null, 2), 'utf8');
-    } catch (err) {
-      console.error('Error while writing file:', err.message);
+/*
+    getProducts(){
+        return this.products
     }
-  }
+    */
+    async getProducts () {
+        try{
+            const productos = JSON.parse(await fs.readFile(this.path, 'utf-8'))
+            console.log(productos)
+        } catch(error){
+            console.error('Error: ',error)
+        }
+    }
+    /*
+    getProductById(id){
+        let product = this.products.find(prod => prod.id == id)
+        if(product){
+            return product
+        }
+        return "Not found"
+    }
+    */
 
-  addProduct(title, description, price, thumbnail, code, stock) {
-    if (!title || !description || !price || !thumbnail || !code || !stock) {
-      console.error("Error! Todos los campos son obligatorios!");
-      return;
+   async getProductById(id){
+        //En el productManager, la ruta esta en this.path
+        const products = JSON.parse(await fs.readFile(this.path, 'utf-8'))
+        const prod = products.find(producto => producto.id === id)
+        if (prod) {
+            console.log(prod)
+        } else {
+            console.log("Producto no existe")
+        }
     }
 
-    const codeExists = this.productos.some((product) => product.code === code);
-    if (codeExists) {
-      console.error("El código ya está registrado para otro producto.");
-      return;
+
+   /* addProducts(product){
+
+        if (!product.title || !product.descripcion || !product.price || !product.thumbnail || !product.code || !product.stock) {
+            console.error("**********Error! los campos son obligatorios!*********");
+            return;
+        }
+          
+          //console.log(product.title);
+
+
+        if(this.products.find(prod => prod.code == product.code)){
+            return "El producto ya existe"
+        }
+        if(product.code != "" || product.stock >= 0){
+            this.products.push(product)
+        } else{
+            return "No puedo cargar un producto vacio"
+        }
+    }*/
+    async addProduct(product){
+        //Consulto el txt y lo parseo
+        const products = JSON.parse(await fs.readFile(this.path, 'utf-8'))
+
+        //console.log("*****************", products[1].title)
+        //Consulto si mi producto ya existe en el txt
+        if (products.find(producto => producto.id == product.id)) {
+            return "Producto ya agregado"
+        }
+        //Lo agrego al array al ya saber que no existe
+        products.push(product)
+        //Parsearlo y guardar el array modificado
+        await fs.writeFile(this.path, JSON.stringify(products))
+    }
+    async updateProduct(id,nombre){
+        const products = JSON.parse(await fs.readFile(this.path, 'utf-8'))
+        const indice = products.findIndex(prod => prod.id === id)
+    
+        if (indice != -1) {
+            //Mediante el indice modifico todos los atributos de mi objeto
+            products[indice].title = nombre
+            //Resto de los atributos presentes
+            await fs.writeFile(this.path, JSON.stringify(products))
+        } else {
+            console.log("Producto no encontrado")
+        }
     }
 
-    const product = {
-      id: this.idContador,
-      title: title,
-      description: description,
-      price: price,
-      thumbnail: thumbnail,
-      code: code,
-      stock: stock,
-    };
-    this.productos.push(product);
-
-    this.idContador++;
-
-    this._writeFile(); // Escribir los productos en el archivo después de agregar uno nuevo
-
-    console.log("Se agregó un nuevo producto:", product);
-  }
-
-  getProducts() {
-    console.log("Todos los Productos del archivo:");
-    return this.productos;
-  }
-
-  getProductById(id) {
-    const product = this.productos.find((product) => product.id === id);
-    if (product) {
-      console.log("El producto encontrado por el ID es el siguiente:");
-      return product;
-    } else {
-      console.error("Producto no encontrado");
-      return null;
+    async deleteProduct(id){
+        const products = JSON.parse(await fs.readFile(this.path, 'utf-8'))
+        const prods = products.filter(prod => prod.id != id)
+        await fs.writeFile(this.path, JSON.stringify(prods))
     }
-  }
-
-  updateProduct(id, updatedFields) {
-    const productIndex = this.productos.findIndex((product) => product.id === id);
-    if (productIndex === -1) {
-      console.error("Producto no encontrado");
-      return;
-    }
-
-    const updatedProduct = { ...this.productos[productIndex], ...updatedFields };
-    this.productos[productIndex] = updatedProduct;
-
-    this._writeFile(); // Escribir los productos en el archivo después de actualizar uno
-
-    console.log("Producto actualizado:", updatedProduct);
-  }
-
-  deleteProduct(id) {
-    this.productos = this.productos.filter((product) => product.id !== id);
-
-    this._writeFile(); // Escribir los productos en el archivo después de eliminar uno
-
-    console.log("Producto eliminado con éxito.");
-  }
 }
+class Product {
+    constructor(title,descripcion,price,thumbnail,code,stock){
+        this.title=title
+        this.descripcion=descripcion
+        this.price=price
+        this.thumbnail=thumbnail
+        this.code=code
+        this.stock=stock
+        this.id = Product.incrementarId()
+    }
+    static incrementarId(){
+        if(this.idIncrement){
+            this.idIncrement++
+        } else{
+            this.idIncrement = 1
+        }
+        return this.idIncrement
+    }
+}
+const producto1 = new Product("moto zanella","patagonia eagle 150",1000000,"nico","3",1000)
+const producto2 = new Product("moto mondial","mondial 250",2000000,"leo","4",500)
 
-// Uso de la clase ProductManager
-const productManager = new ProductManager('productos.txt');
+//console.log(producto1)
+//console.log(producto2)
 
-// Agregar productos
-productManager.addProduct("Heladera Gafa", "equipo con freezer 326 lts", 1990000, "heladeraGafa.jpg", "1", 300);
-productManager.addProduct("Heladera Dream", "equipo con freezer 314 lts", 2490000, "heladeraDream.jpg", "2", 200);
+const productManager = new ProductManager('./productos.txt')
 
-// Obtener todos los productos
-console.log(productManager.getProducts());
+//productManager.addProduct(producto1)
+//productManager.addProduct(producto2)
 
-// Obtener un producto por su id
-console.log(productManager.getProductById(2));
+console.log(productManager.getProducts())
+//console.log(productManager.getProductById(2))
 
-// Actualizar un producto
-productManager.updateProduct(2, { title: "Nueva Heladera", price: 2790000 });
+//productManager.updateProduct(1,"Mundo")
 
-// Eliminar un producto
-//productManager.deleteProduct(2);
+//console.log(productManager.getProductById(1))
+
+//productManager.deleteProduct(1)
