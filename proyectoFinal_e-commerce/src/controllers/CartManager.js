@@ -23,19 +23,26 @@ export default class CartManager {
         }
     }
 
+    async getCartById(cid){
+
+        const carts = JSON.parse(await fs.readFile(this.path, 'utf-8'))
+        const cart = carts.find(cart => cart.cid === cid)
+        return cart
+    }
+
     async addCart(cartData) {
         try {
             const carts = await this.getCarts();
 
-            if (carts.find(cart => cart.id == cartData.id)) {
+            if (carts.find(cart => cart.cid == cartData.cid)) {
                 return false;
             }
             // Generar un ID único para el carrito
-            const id = CartManager.incrementarId();
+            const cid = CartManager.incrementarId();
 
             // Crear un nuevo carrito
             const newCart = {
-                id,
+                cid,
                 products: cartData.products || []
             };
 
@@ -48,8 +55,6 @@ export default class CartManager {
         }
     }
 
-    // Otros métodos...
-
     generateId(carts) {
         /*
         if (carts.length === 0) {
@@ -59,29 +64,29 @@ export default class CartManager {
         return maxId + 1;
         */
         
-            if(carts.id){
-               carts.id++
+            if(carts.cid){
+               carts.cid++
             } else{
-                carts.id = 1
+                carts.cid = 1
             }
-            return carts.id
+            return carts.cid
         
     }
 
     async addProductToCart(cartId, productId, quantity) {
         try {
             const carts = await this.getCarts();
-            const cartIndex = carts.findIndex(cart => cart.id == cartId);
+            const cartIndex = carts.findIndex(cart => cart.cid === cartId);
 
             if (cartIndex === -1) {
                 return false; // El carrito no existe
             }
 
-            const existingProductIndex = carts[cartIndex].products.findIndex(product => product.id == productId);
+            const existingProductIndex = carts[cartIndex].products.findIndex(product => product.pid === productId);
 
             if (existingProductIndex === -1) {
                 // Agregar un nuevo producto al carrito
-                carts[cartIndex].products.push({ id: productId, quantity });
+                carts[cartIndex].products.push({ pid: productId, quantity });
             } else {
                 // Incrementar la cantidad del producto existente
                 carts[cartIndex].products[existingProductIndex].quantity += quantity;

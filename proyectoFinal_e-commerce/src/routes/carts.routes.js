@@ -8,7 +8,6 @@ const cartManager = new CartManager('src/models/carrito.txt');
 const routerCart = Router();
 
 // Agrega las rutas para el carrito aquí
-// Ejemplo:
 routerCart.get('/', async (req, res) => {
     // Obtener los productos en el carrito y responder con ellos
     const { limit } = req.query
@@ -18,6 +17,16 @@ routerCart.get('/', async (req, res) => {
     res.status(200).send(newCart)
 
 });
+
+routerCart.get('/:cid', async (req, res) => {
+    const { cid } = req.params
+    const cart = await cartManager.getCartById(parseInt(cid))
+
+    if (cart)
+        res.status(200).send(cart)
+    else
+        res.status(404).send("Carrito no existente")
+})
 
 routerCart.post('/', async (req, res) => {
     // Agregar un producto al carrito y responder con la confirmación
@@ -34,13 +43,13 @@ routerCart.post('/', async (req, res) => {
 });
 
 routerCart.post('/:cid/product/:pid', async (req, res) => {
-    const cartId = req.params.cid;
-    const productId = req.params.pid;
+    const cartId = parseInt(req.params.cid); // Convertir a número entero
+    const productId = parseInt(req.params.pid); // Convertir a número entero
     const quantity = req.body.quantity || 1;
 
-    const confirmacion = await cartManager.addProductToCart(cartId, productId, quantity);
+    const confirmation = await cartManager.addProductToCart(cartId, productId, quantity);
 
-    if (confirmacion) {
+    if (confirmation) {
         res.status(201).send('Producto agregado correctamente');
     } else {
         res.status(401).send('Error al agregar el producto');
