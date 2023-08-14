@@ -5,14 +5,6 @@ export default class ProductManager{
     this.path=path
     this.products=[]
     }
-    static incrementarId(){
-        if(this.idIncrement){
-            this.idIncrement++
-        } else{
-            this.idIncrement = 1
-        }
-        return this.idIncrement
-    }
 
     async getProducts () {
         try{
@@ -24,22 +16,18 @@ export default class ProductManager{
         }
     }
 
-   async getProductById(id){
+   async getProductById(pid){
         //En el productManager, la ruta esta en this.path
         const products = JSON.parse(await fs.readFile(this.path, 'utf-8'))
-        const prod = products.find(producto => producto.id === id)
+        const prod = products.find(producto => producto.pid === pid)
         return prod
     }
 
     async addProduct(product){
         //Consulto el txt y lo parseo
         const products = JSON.parse(await fs.readFile(this.path, 'utf-8'))
-        //Consulto si mi producto ya existe en el txt
-        if (products.find(producto => producto.id == product.id)) {
-            return false;
-        }
 
-        product.id = ProductManager.incrementarId()
+        product.pid = this.generateId(products)
         product.status= true;
         //Lo agrego al array al ya saber que no existe
         products.push(product)
@@ -47,14 +35,20 @@ export default class ProductManager{
         await fs.writeFile(this.path, JSON.stringify(products))
         return true;
     }
-    async updateProduct(id,nombre){
+    async updateProduct(pid,product){
         const products = JSON.parse(await fs.readFile(this.path, 'utf-8'))
-        const indice = products.findIndex(prod => prod.id === id)
+        const indice = products.findIndex(prod => prod.pid === pid)
     
         if (indice != -1) {
             //Mediante el indice modifico todos los atributos de mi objeto
-            products[indice].title = nombre
-            //Resto de los atributos presentes
+            products[indice].title = product.title
+            products[indice].description = product.description
+            products[indice].price = product.price
+            products[indice].thumbnail = product.thumbnail
+            products[indice].code = product.code
+            products[indice].stock = product.stock
+            products[indice].category = product.category
+            
             await fs.writeFile(this.path, JSON.stringify(products))
 
             return true; // Retorna true para indicar éxito en la actualización
@@ -63,13 +57,23 @@ export default class ProductManager{
         }
     }
 
-    async deleteProduct(id){
+    async deleteProduct(pid){
         const products = JSON.parse(await fs.readFile(this.path, 'utf-8'))
-        const prods = products.filter(prod => prod.id != id)
+        const prods = products.filter(prod => prod.pid != pid)
         await fs.writeFile(this.path, JSON.stringify(prods))
 
         return prods.length < products.length; // Devuelve true si se eliminó un producto, false si no se encontró          
     }
+
+    generateId(products) {
+
+        if (products.length === 0) {
+            return 1;
+        }
+        const maxId = products.reduce((max, prod) => (prod.pid > max ? prod.pid : max), 0);
+        return maxId + 1;
+        }
+
 }
 
 

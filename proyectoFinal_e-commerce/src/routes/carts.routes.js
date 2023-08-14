@@ -35,12 +35,26 @@ routerCart.post('/', async (req, res) => {
     const confirmacion = await cartManager.addCart(cartData);
 
     if (confirmacion) {
-        res.status(201).send('agregado correctamente');
+        res.status(201).send('Nuevo carrito agregado');
     } else {
-        res.status(401).send('Error al agregar');
+        res.status(401).send('Error al agregar o carrito existente');
     }
 
 });
+/* Ejemplo de Body
+{
+    "products": [
+        {
+            "pid": 4,
+            "quantity": 3
+        },
+        {
+            "pid": 6,
+            "quantity": 3
+        }
+    ]
+}
+*/
 
 routerCart.post('/:cid/product/:pid', async (req, res) => {
     const cartId = parseInt(req.params.cid); // Convertir a número entero
@@ -55,5 +69,13 @@ routerCart.post('/:cid/product/:pid', async (req, res) => {
         res.status(401).send('Error al agregar el producto');
     }
 });
+
+/*Ejemplo de body
+    {
+
+                "quantity": 4
+
+    }
+*/
 
 export default routerCart;

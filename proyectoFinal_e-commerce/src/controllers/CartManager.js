@@ -4,15 +4,6 @@ export default class CartManager {
     constructor(path) {
         this.path = path;
     }
-    static incrementarId(){
-        if(this.idIncrement){
-            this.idIncrement++
-        } else{
-            this.idIncrement = 1
-        }
-        return this.idIncrement
-    }
-
     async getCarts() {
         try {
             const carts = JSON.parse(await fs.readFile(this.path, 'utf-8'));
@@ -34,11 +25,8 @@ export default class CartManager {
         try {
             const carts = await this.getCarts();
 
-            if (carts.find(cart => cart.cid == cartData.cid)) {
-                return false;
-            }
             // Generar un ID único para el carrito
-            const cid = CartManager.incrementarId();
+            const cid = this.generateId(carts);
 
             // Crear un nuevo carrito
             const newCart = {
@@ -49,6 +37,7 @@ export default class CartManager {
             carts.push(newCart);    
             await fs.writeFile(this.path, JSON.stringify(carts));
             return true;
+           
         } catch (error) {
             console.error('Error: ', error);
             return false;
@@ -56,23 +45,14 @@ export default class CartManager {
     }
 
     generateId(carts) {
-        /*
+
         if (carts.length === 0) {
             return 1;
         }
-        const maxId = carts.reduce((max, cart) => (cart.id > max ? cart.id : max), 0);
+        const maxId = carts.reduce((max, cart) => (cart.cid > max ? cart.cid : max), 0);
         return maxId + 1;
-        */
+        }
         
-            if(carts.cid){
-               carts.cid++
-            } else{
-                carts.cid = 1
-            }
-            return carts.cid
-        
-    }
-
     async addProductToCart(cartId, productId, quantity) {
         try {
             const carts = await this.getCarts();
@@ -99,5 +79,4 @@ export default class CartManager {
             return false;
         }
     }
-
 }

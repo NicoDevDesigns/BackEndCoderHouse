@@ -18,16 +18,15 @@ routerProd.get('/', async (req, res) => {
 
 })
 
-routerProd.get('/:id', async (req, res) => {
-    const { id } = req.params
-    const prod = await productManager.getProductById(parseInt(id))
+routerProd.get('/:pid', async (req, res) => {
+    const { pid } = req.params
+    const prod = await productManager.getProductById(parseInt(pid))
 
     if (prod)
         res.status(200).send(prod)
     else
         res.status(404).send("Producto no existente")
 })
-
 
 routerProd.post('/', async (req, res) => {
 
@@ -45,19 +44,13 @@ routerProd.post('/', async (req, res) => {
         res.status(401).send('Error al agregar el producto');
     }
 
-/*
-    const confirmacion = await productManager.addProduct(req.body)
-
-    if (confirmacion)
-        res.status(200).send("Producto creado correctamente")
-    else
-        res.status(400).send("Producto ya existente")
-    */
 })
 
-routerProd.put('/:id', async (req, res) => {
+routerProd.put('/:pid', async (req, res) => {
 
-    const confirmacion = await productManager.updateProduct(req.params.id, req.body)
+    const prodId = parseInt(req.params.pid);
+
+    const confirmacion = await productManager.updateProduct(prodId, req.body)
 
     if (confirmacion)
         res.status(200).send("Producto actualizado correctamente")
@@ -66,9 +59,11 @@ routerProd.put('/:id', async (req, res) => {
 
 })
 
-routerProd.delete('/:id', async (req, res) => {
+routerProd.delete('/:pid', async (req, res) => {
 
-    const confirmacion = await productManager.deleteProduct(req.params.id)
+    const prodId = parseInt(req.params.pid);
+
+    const confirmacion = await productManager.deleteProduct(prodId)
 
     if (confirmacion)
         res.status(200).send("Producto eliminado correctamente")
@@ -78,37 +73,3 @@ routerProd.delete('/:id', async (req, res) => {
 
 export default routerProd
 
-/*
-import { Router } from "express";
-import ProductManager from "../ProductManager";
-
-const routerProd = Router()
-
-routerProd.get('/',async(req,res)=>{
-    const {limit}= req.query
-
-    const prods = await ProductManager.getProducts()
-    const products = prods.slice(0,limit)
-    res.status(200).send(products)
-})
-
-
-
-routerProd.get('/:id',async(req,res)=>{
-    const {id}= req.params
-    const prod = await ProductManager.getProductById(parseInt(id))
-
-    if(prod)
-        res.status(200).send(prod)
-    else
-        res.status(404).send("Producto no existente")
-})
-
-
-
-routerProd.post('/')
-routerProd.put('/:id')
-routerProd.delete('/:id')
-
-export default routerProd
-*/
