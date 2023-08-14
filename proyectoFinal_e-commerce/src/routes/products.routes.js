@@ -7,11 +7,7 @@ const productManager = new ProductManager('src/models/productos.txt')
 
 const routerProd = Router()
 
-/*
-routerProd.get('/', (req, res) => {
-    res.send("Hola desde la página de inicio de mi app");
-  });
-  */
+
 
 routerProd.get('/', async (req, res) => {
     const { limit } = req.query
@@ -34,12 +30,29 @@ routerProd.get('/:id', async (req, res) => {
 
 
 routerProd.post('/', async (req, res) => {
+
+    const productData = req.body;
+
+    if (!productData.title || !productData.description || !productData.code || !productData.price || !productData.stock || !productData.category) {
+        return res.status(400).send('Todos los campos son obligatorios');
+    }
+
+    const confirmacion = await productManager.addProduct(productData);
+
+    if (confirmacion) {
+        res.status(201).send('Producto agregado correctamente');
+    } else {
+        res.status(401).send('Error al agregar el producto');
+    }
+
+/*
     const confirmacion = await productManager.addProduct(req.body)
 
     if (confirmacion)
         res.status(200).send("Producto creado correctamente")
     else
         res.status(400).send("Producto ya existente")
+    */
 })
 
 routerProd.put('/:id', async (req, res) => {

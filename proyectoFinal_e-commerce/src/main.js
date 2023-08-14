@@ -1,6 +1,6 @@
 import express from 'express'
 import routerProd from './routes/products.routes.js'
-//import routerCart from './routes/carts.routes.js'; // Importa el enrutador del carrito
+import routerCart from './routes/carts.routes.js'; // Importa el enrutador del carrito
 
 
 const app = express()
@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true })) //URL extensas
 //app.use('/', routerProd)
 
 app.use('/api/product',routerProd)
-//app.use('/api/carts', routerCart);     // Grupo de rutas para carritos
+app.use('/api/carts', routerCart);     // Grupo de rutas para carritos
 
 
 
