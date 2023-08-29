@@ -50,8 +50,8 @@ io.on('connection', (socket) => {
     socket.on('nuevoProducto', async (prod) => {
         await productManager.addProduct(prod);
         const products = await productManager.getProducts();
-        io.emit('productosActualizados', products);
-        io.emit('mensajeProductoCreado', 'El producto se creó correctamente');
+        socket.emit('productosActualizados', products);
+        socket.emit('mensajeProductoCreado', 'El producto se creó correctamente');
     });
 });
 
@@ -60,20 +60,6 @@ app.use('/static', express.static(path.join(__dirname, '/public'))) //path.join(
 app.use('/api/product',routerProd)   // ruta productos
 app.use('/api/carts', routerCart);     // ruta carritos
 
-
-// Renderizar la vista "home.handlebars" con la lista de productos
-//Direccion http://localhost:8080/static/home
-
-app.get('/static/home', async (req, res) => {
-    const productos = await productManager.getProducts();
-
-    res.render('home', {
-        titulo: 'Lista de Productos',
-        rutaCSS: 'home',
-        rutaJS: 'home',
-        productos: productos,
-    });
-});
 
 // Renderizar la vista "realTimeProducts.handlebars" con el formulario para agregar productos
 //http://localhost:8080/static/realTimeProducts
@@ -85,3 +71,20 @@ app.get('/static/realTimeProducts', (req, res) => {
         rutaJS: 'realTimeProducts'
     });
 })
+
+
+// Renderizar la vista "home.handlebars" con la lista de productos
+//Direccion http://localhost:8080/static/home
+/*
+app.get('/static/home', async (req, res) => {
+    const productos = await productManager.getProducts();
+
+    res.render('home', {
+        titulo: 'Lista de Productos',
+        rutaCSS: 'home',
+        rutaJS: 'home',
+        productos: productos,
+    });
+});
+*/
+
