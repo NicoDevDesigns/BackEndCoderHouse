@@ -1,9 +1,9 @@
-import {cartModel} from "../models/carts.model.js"
+import {cartModel} from "../models/carts.models.js"
 import ProductManager from "../MongoDB/productManagerMongo.js"
 
 //const pm = new ProductManager()
 
-class CartManager {
+export default class CartManager {
     getCarts = async () => {
         try {
             const carts = await cartModel.find();
@@ -65,4 +65,4 @@ class CartManager {
 
 };
 
-export default CartManager;
+//export default CartManager;

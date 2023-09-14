@@ -84,7 +84,7 @@ io.on("connection",async(socket)=>{
 
 
 //rutas de fileSystem
-app.use('/api/product',routerProd)   // ruta productos
+//app.use('/api/product',routerProd)   // ruta productos
 //app.use('/api/carts', routerCart);     // ruta carritos
 
 //Usando fileSystem
