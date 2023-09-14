@@ -1,70 +1,80 @@
 import { Router } from "express";
-import productModel from "../models/products.models.js";
+//import productModel from "../models/products.models.js";
+import ProductManager from "../dao/MongoDB/productManagerMongo.js"
 
+const manager=new ProductManager()
 const productRouter = Router()
 
-productRouter.get('/', async (req, res) => {
+
+productRouter.get("/",async(req,res)=>{
     const { limit } = req.query
-    try {
-        const prods = await productModel.find().limit(limit)
-        res.status(200).send({ resultado: 'OK', message: prods })
-    } catch (error) {
+    const products= await manager.getProducts(limit)
+
+      if (products === 'error') {
+        res.status(500).send({ error: "Hubo un error al consultar productos." });
+      } else if (products.length === 0) {
         res.status(400).send({ error: `Error al consultar productos: ${error}` })
-    }
-})
+        //res.json("No hay productos en la tienda");
+      } else {
+        //res.json({message:"success",products})
+        res.status(200).send({ resultado: 'OK', message: products });
+      }
+  })
 
 productRouter.get('/:id', async (req, res) => {
     const { id } = req.params
-    try {
-        const prod = await productModel.findById(id)
-        if (prod)
-            res.status(200).send({ resultado: 'OK', message: prod })
-        else
-            res.status(404).send({ resultado: 'Not Found', message: prod })
-    } catch (error) {
-        res.status(400).send({ error: `Error al consultar producto: ${error}` })
-    }
+        const product = await productModel.findById(id)
+
+      if (product === 'error') {
+        res.status(500).send({ error: "Hubo un error al buscar el producto." });
+      } else if (product.length === 0) {
+        res.status(400).send({ error: `Error no hay producto en la lista` })
+        //res.json("No hay productos en la tienda");
+      } else {
+        //res.json({message:"success",products})
+        res.status(200).send({ resultado: 'OK', message: product });
+      }
 })
 
 productRouter.post('/', async (req, res) => {
-    const { title, description, stock, code, price, category } = req.body
+        const obj=req.body
+        const newProduct = await manager.addProduct(obj);
 
-    try {
-        const respuesta = await productModel.create({
-            title, description, stock, code, price, category
-        })
+        if (newProduct === 'error') {
+            res.status(500).send({ error: "Hubo un error al intentar agregar un nuevo producto." });
+        } else if (newProduct.length === 0) {
+            res.status(400).send({ error: `Producto ingresado vacio` })
+        }else {
+        res.status(200).send({ resultado: 'Producto agregado correctamente', message: newProduct })
+        }
 
-        res.status(200).send({ resultado: 'OK', message: respuesta })
-    } catch (error) {
-        res.status(400).send({ error: `Error al crear producto: ${error}` })
-    }
 })
 
-productRouter.update('/:id', async (req, res) => {
+productRouter.put('/:id', async (req, res) => {
     const { id } = req.params
-    const { title, description, stock, code, price, category, status } = req.body
-    try {
-        const respuesta = await productModel.findByIdAndUpdate(id, { title, description, stock, code, price, category, status })
-        if (prod)
-            res.status(200).send({ resultado: 'OK', message: respuesta })
-        else
-            res.status(404).send({ resultado: 'Not Found', message: respuesta })
-    } catch (error) {
-        res.status(400).send({ error: `Error al actualizar producto: ${error}` })
+    const { obj } = req.body
+
+    const updatedproduct = await manager.updateProduct(pid,obj);
+
+    if (updatedproduct === 'error') {
+        res.status(500).send({ error: "Hubo un error al intentar actualizar el producto." });
+    } else if (updatedproduct.length === 0) {
+        res.status(400).send({ error: `Producto ingresado vacio` })
+    }else {
+    res.status(200).send({ resultado: 'Producto actualizado correctamente', message: updatedproduct })
     }
 })
 
 productRouter.delete('/:id', async (req, res) => {
     const { id } = req.params
+    const deleteproduct = await manager.deleteProduct(id);
 
-    try {
-        const respuesta = await productModel.findByIdAndDelete(id)
-        if (prod)
-            res.status(200).send({ resultado: 'OK', message: respuesta })
-        else
-            res.status(404).send({ resultado: 'Not Found', message: respuesta })
-    } catch (error) {
-        res.status(400).send({ error: `Error al eliminar producto: ${error}` })
+    if (deleteproduct === 'error') {
+        res.status(500).send({ error: "Hubo un error al intentar eliminar un nuevo producto." });
+    } else if (deleteproduct.length === 0 || deleteproduct == null) {
+        res.status(400).send({ error: `No hay producto para eliminar` })
+    }else {
+    res.status(200).send({ resultado: 'Producto eliminado correctamente', message: deleteproduct })
     }
 })
 

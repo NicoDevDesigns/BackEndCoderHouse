@@ -1,81 +1,97 @@
-import { Router } from 'express';
-// Importa tu manejador de carrito
-//import { CartManager } from './CartManager.js'; 
-import CartManager from '../controllers/CartManager.js';
+import {Router} from "express"
+//import CartManager from "../dao/MongoDB/cartManagerMongo"
+import ProductManager from "../dao/MongoDB/productManagerMongo"
 
+//const cartManager = new CartManager()
+const productManager = new ProductManager()
+ 
+const cartRouter =Router()
 
-const cartManager = new CartManager('src/models/carrito.txt');
-const routerCart = Router();
-
-// Agrega las rutas para el carrito aquí
-routerCart.get('/', async (req, res) => {
-    // Obtener los productos en el carrito y responder con ellos
-    const { limit } = req.query
-
-    const cart = await cartManager.getCarts()
-    const newCart = cart.slice(0, limit)
-    res.status(200).send(newCart)
-
-});
-
-routerCart.get('/:cid', async (req, res) => {
-    const { cid } = req.params
-    const cart = await cartManager.getCartById(parseInt(cid))
-
-    if (cart)
-        res.status(200).send(cart)
-    else
-        res.status(404).send("Carrito no existente")
+cartRouter.get("/carts",async(req,res)=>{
+   const carrito=await cartManager.getCarts()
+   res.json({carrito})
 })
 
-routerCart.post('/', async (req, res) => {
-    // Agregar un producto al carrito y responder con la confirmación
-    const cartData = req.body;
+cartRouter.get("/carts/:cid",async(req,res)=>{
+    const carritofound=await cartManager.getCartbyId(req.params)
+    res.json({status:"success",carritofound})
+})
 
-    const confirmacion = await cartManager.addCart(cartData);
 
-    if (confirmacion) {
-        res.status(201).send('Nuevo carrito agregado');
-    } else {
-        res.status(401).send('Error al agregar o carrito existente');
-    }
 
+cartRouter.post('/carts', async (req, res) => {
+  try {
+      const { obj } = req.body;
+
+      if (!Array.isArray(obj)) {
+          return res.status(400).send('Invalid request: products must be an array');
+      }
+
+      const validProducts = [];
+
+      for (const product of obj) {
+          const checkId = await productManager.getProductById(product._id);
+          if (checkId === null) {
+              return res.status(404).send(`Product with id ${product._id} not found`);
+          }
+          validProducts.push(checkId);
+      }
+
+      const cart = await cartManager.addCart(validProducts);
+      res.status(200).send(cart);
+
+  } catch (err) {
+      console.log(err);
+      res.status(500).send('Internal Server Error');
+  }
 });
-/* Ejemplo de Body
-{
-    "products": [
-        {
-            "pid": 4,
-            "quantity": 3
-        },
-        {
-            "pid": 6,
-            "quantity": 3
+cartRouter.post("/carts/:cid/products/:pid", async (req, res) => {
+    const { cid, pid } = req.params;
+    const { quantity } = req.body;
+  
+    try {
+      const checkIdProduct = await productManager.getProductById(pid);
+      if (!checkIdProduct) {
+        return res.status(404).send({ message: `Product with ID: ${pid} not found` });
+      }
+  
+      const checkIdCart = await cartManager.getCartById(cid);
+      if (!checkIdCart) {
+        return res.status(404).send({ message: `Cart with ID: ${cid} not found` });
+      }
+  
+      const result = await cartManager.addProductInCart(cid, { _id: pid, quantity:quantity });
+      console.log(result);
+      return res.status(200).send({
+        message: `Product with ID: ${pid} added to cart with ID: ${cid}`,
+        cart: result,
+      });
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return res.status(500).send({ message: "An error occurred while processing the request" });
+    }
+  });
+
+  export default cartRouter
+/*
+import { Router } from "express";
+import cartModel from "../dao/models/carts.models.js";
+
+const cartRouter = Router()
+cartRouter.post('/:cid/products/:pid', async (req, res) => {
+    const { cid, pid } = req.params
+    const { quantity } = req.body
+    try {
+        const cart = await cartModel.findById(cid)
+        if (cart) {
+            cart.products.push({ id_prod: pid, quantity: quantity })
+            const respuesta = await cartModel.findByIdAndUpdate(cid, cart) //Actualizo el carrito de mi BDD con el nuevo producto
+            res.status(200).send({ respuesta: 'OK', mensaje: respuesta })
         }
-    ]
-}
-*/
-
-routerCart.post('/:cid/product/:pid', async (req, res) => {
-    const cartId = parseInt(req.params.cid); // Convertir a número entero
-    const productId = parseInt(req.params.pid); // Convertir a número entero
-    const quantity = req.body.quantity || 1;
-
-    const confirmation = await cartManager.addProductToCart(cartId, productId, quantity);
-
-    if (confirmation) {
-        res.status(201).send('Producto agregado correctamente');
-    } else {
-        res.status(401).send('Error al agregar el producto');
+    } catch (e) {
+        res.status(400).send({ error: e })
     }
-});
+})
 
-/*Ejemplo de body
-    {
-
-                "quantity": 4
-
-    }
+export default cartRouter
 */
-
-export default routerCart;

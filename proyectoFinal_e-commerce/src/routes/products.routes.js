@@ -1,15 +1,15 @@
 
 import { Router } from 'express'
-import ProductManager from '../controllers/ProductManager.js';
+import ProductManager from '../dao/fileSystem/controllers/ProductManager.js';
 //import { ProductManager } from './ProductManager.js'
 
 const productManager = new ProductManager('src/models/productos.txt')
 
-const routerProd = Router()
+const ProductRouter = Router()
 
 
 
-routerProd.get('/', async (req, res) => {
+ProductRouter.get('/', async (req, res) => {
     const { limit } = req.query
 
     const prods = await productManager.getProducts()
@@ -18,7 +18,7 @@ routerProd.get('/', async (req, res) => {
 
 })
 
-routerProd.get('/:pid', async (req, res) => {
+ProductRouter.get('/:pid', async (req, res) => {
     const { pid } = req.params
     const prod = await productManager.getProductById(parseInt(pid))
 
@@ -28,7 +28,7 @@ routerProd.get('/:pid', async (req, res) => {
         res.status(404).send("Producto no existente")
 })
 
-routerProd.post('/', async (req, res) => {
+ProductRouter.post('/', async (req, res) => {
 
     const productData = req.body;
 
@@ -46,7 +46,7 @@ routerProd.post('/', async (req, res) => {
 
 })
 
-routerProd.put('/:pid', async (req, res) => {
+ProductRouter.put('/:pid', async (req, res) => {
 
     const prodId = parseInt(req.params.pid);
 
@@ -59,7 +59,7 @@ routerProd.put('/:pid', async (req, res) => {
 
 })
 
-routerProd.delete('/:pid', async (req, res) => {
+ProductRouter.delete('/:pid', async (req, res) => {
 
     const prodId = parseInt(req.params.pid);
 
@@ -71,5 +71,5 @@ routerProd.delete('/:pid', async (req, res) => {
         res.status(404).send("Producto no encontrado")
 })
 
-export default routerProd
+export default ProductRouter
 
