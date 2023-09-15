@@ -72,8 +72,14 @@ io.on("connection",async(socket)=>{
     console.log("Conection with socket.io Mongo")
 
     const Productos =await productManagerSocket.getProducts()
-
     socket.emit("envioProductos", Productos)
+
+    socket.on('nuevoProducto', async (prod) => {
+        await productManagerSocket.addProduct(prod);
+        //const products = await productManager.getProducts();
+        //socket.emit('productosActualizados', products);
+        socket.emit('mensajeProductoCreado', 'El producto se creó correctamente');
+    });
 
 })
 

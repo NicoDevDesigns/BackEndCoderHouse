@@ -32,7 +32,6 @@ addProduct = async (product) => {
     console.error("Error en productManagerMongo addProduct:", error);
     return 'error'
   }
-
 }
       
 updateProduct = async (id, product) => {
