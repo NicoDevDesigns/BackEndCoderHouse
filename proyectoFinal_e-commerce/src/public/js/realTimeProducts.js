@@ -57,7 +57,7 @@ document.getElementById("delete-btn").addEventListener("click", function () {
     const deleteidinput = document.getElementById("id-prod");
     const deleteid = deleteidinput.value;
     console.log(deleteid)
-    socketClient.emit("deleteProduct", deleteid);
+    socket.emit("deleteProduct", deleteid);
     deleteidinput.value = "";
   });
 
