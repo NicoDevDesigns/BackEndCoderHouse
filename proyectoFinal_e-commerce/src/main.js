@@ -96,6 +96,13 @@ io.on("connection",async(socket)=>{
         socket.emit('mensajeProductoCreado', 'El producto se creó correctamente');
     });
 
+    socket.on("deleteProduct",async(id)=>{
+        console.log(id)
+       await productManagerSocket.deleteProduct(id)
+       const Productos =await productManagerSocket.getProducts()
+       socket.emit("envioProductos", Productos)
+        })
+
       socket.on('mensaje', async info => {
 		const { email, message } = info;
 		await messagesManagerSocket.createMessage({
