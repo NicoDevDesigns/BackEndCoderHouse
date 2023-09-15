@@ -12,8 +12,11 @@ import mongoose from 'mongoose'
 //import cartRouter from './routes/cart.routes.js'
 //import cartModel from './models/carts.models.js'
 import ProductManagerMongo from "./dao/MongoDB/productManagerMongo.js"
+import MessagesManager from "./dao/MongoDB/messageManagerMongo.js";
 
-const productManagerSocket=new ProductManagerMongo()
+
+const productManagerSocket = new ProductManagerMongo()
+const messagesManagerSocket = new MessagesManager();
 
 const app = express()
 const PORT = 8080;
@@ -63,6 +66,18 @@ app.get('/static/realTimeProducts', (req, res) => {
         rutaJS: 'realTimeProducts'
     });
 })
+
+app.get('/static/chat',(req,res)=>{
+    res.render('chat',{
+        titulo: 'Chat message',
+        rutaCSS: 'chat',
+        rutaJS: 'chat'
+    });
+})
+
+
+
+
 //Routes
 app.use('/static', express.static(path.join(__dirname, '/public'))) //path.join() es una concatenacion de una manera mas optima que con el +
 
@@ -80,6 +95,17 @@ io.on("connection",async(socket)=>{
         //socket.emit('productosActualizados', products);
         socket.emit('mensajeProductoCreado', 'El producto se creó correctamente');
     });
+
+      socket.on('mensaje', async info => {
+		const { email, message } = info;
+		await messagesManagerSocket.createMessage({
+			email,
+			message,
+		});
+		const messages = await messagesManagerSocket.getMessages();
+
+		socket.emit('mensajes', messages);
+	});
 
 })
 

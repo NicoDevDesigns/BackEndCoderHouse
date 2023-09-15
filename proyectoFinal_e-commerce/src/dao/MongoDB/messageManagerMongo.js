@@ -1,5 +1,5 @@
 
-import messageModel from "../MongoDB/messageManagerMongo"
+import messageModel from "../models/messages.models.js"
 
 export default class MessagesManager {
     getMessages = async () => {
