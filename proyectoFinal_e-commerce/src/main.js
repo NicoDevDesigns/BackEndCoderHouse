@@ -69,7 +69,7 @@ app.use('/static', express.static(path.join(__dirname, '/public'))) //path.join(
 //socket con mongo
 io.on("connection",async(socket)=>{
 
-    console.log("Conection with socket.io",socket.id)
+    console.log("Conection with socket.io Mongo")
 
     const Productos =await productManagerSocket.getProducts()
 
@@ -89,6 +89,7 @@ io.on("connection",async(socket)=>{
 
 //Usando fileSystem
 //Conexion con Socket.io
+/*
 io.on('connection', (socket) => {
     console.log('Conexion con Socket.io');
 
@@ -99,7 +100,7 @@ io.on('connection', (socket) => {
         socket.emit('mensajeProductoCreado', 'El producto se creó correctamente');
     });
 });
-
+*/
 // Renderizar la vista "home.handlebars" con la lista de productos
 //Direccion http://localhost:8080/static/home
 /*
