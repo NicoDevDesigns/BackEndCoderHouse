@@ -11,7 +11,7 @@ import  { productsModel }  from "../models/products.models.js"
       }
   }
 
-    getProducts = async (query={}, { limit = 10, page = 1, sort: sortOption = null } = {}) => {
+    getProducts = async (query, { limit, page, sort: sortOption }) => {
         try {
             const products = await productsModel.paginate(query, { limit, page, sort: sortOption });
             return products
