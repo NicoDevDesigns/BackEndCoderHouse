@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from 'express'
 import multer from 'multer'
 import {engine} from 'express-handlebars'
@@ -22,7 +23,7 @@ const app = express()
 const PORT = 8080;
 
 //Conexion a Mongo
-mongoose.connect('mongodb+srv://nico:1234@cluster0.iwxgugq.mongodb.net/?retryWrites=true&w=majority')
+mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log("BDD conectada"))
     .catch((error) => console.log("Error en conexion con MongoDB ATLAS: ", error))
 
