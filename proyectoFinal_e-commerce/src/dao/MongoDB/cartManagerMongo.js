@@ -5,7 +5,10 @@ import ProductManager from "../MongoDB/productManagerMongo.js"
 
 export default class CartManager {
 
-    
+  //Delete  
+
+
+};
 
 
 
@@ -14,9 +17,6 @@ export default class CartManager {
 
 
 
-
-
-    
 /*
     getCarts = async () => {
         try {
@@ -77,6 +77,6 @@ export default class CartManager {
     };
     
 */
-};
+
 
 //export default CartManager;

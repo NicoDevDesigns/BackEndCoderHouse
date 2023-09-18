@@ -7,6 +7,8 @@ const cartManager = new CartManager()
 const productManager = new ProductManager()
  
 const cartRouter =Router()
+
+//Ingresar productos al carrito
 cartRouter.post("/:cid/products/:pid", async (req, res) => {
   const { cid, pid } = req.params; 
   const quantity = req.body;
@@ -23,6 +25,28 @@ cartRouter.post("/:cid/products/:pid", async (req, res) => {
       res.status(400).send({ error: e })
   }
 })
+//eliminar del carrito el producto seleccionado
+cartRouter.delete("/:cid/products/:pid", async (req, res) => {
+
+})
+
+//Eliminar todos los productos del carrito
+cartRouter.delete("/:cid",async(req,res) =>{
+
+})
+
+//Actualizar el carrito
+cartRouter.put("/:cid", async (req, res) => {
+
+})
+
+//Actualizar la cantidad del carrito
+cartRouter.put("/:cid/products/:pid",async (req, res) => {
+
+})
+
+
+export default cartRouter
 
 
 
@@ -98,7 +122,7 @@ cartRouter.post('/carts', async (req, res) => {
 
   });*/
 
-  export default cartRouter
+
 /*
 import { Router } from "express";
 import cartModel from "../dao/models/carts.models.js";
