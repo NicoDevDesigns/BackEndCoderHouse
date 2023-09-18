@@ -25,6 +25,25 @@ deleteCartAllProducts = async(cid)=>{
     }
 }
 
+//Actualizar el carrito
+updateCartAll = async(cid, updateCart)=>{
+    try {
+        const cart = await cartModel.findById(cid);
+        updateCart.forEach(prod => {
+			const cartProduct = cart.products.find(cartProd => cartProd.id_prod == prod.id_prod);
+			if (cartProduct) {
+				cartProduct.quantity += prod.quantity;
+			} else {
+				cart.products.push(prod);
+			}
+		});
+		await cart.save();
+        return cart
+    } catch (error) {
+        console.error("Error en updateCartAll", error);
+    }
+}
+
 };
 
 

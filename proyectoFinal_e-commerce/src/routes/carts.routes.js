@@ -52,7 +52,22 @@ cartRouter.delete("/:cid",async(req,res) =>{
 
 //Actualizar el carrito
 cartRouter.put("/:cid", async (req, res) =>{
-
+   
+    const {cid}= req.params
+    const {updateCart} = req.body
+    console.log("El valor del body es: ",updateCart)
+  
+    try{
+    const updateCartProducts = await cartManager.updateCartAll(cid,updateCart)
+    if(updateCartProducts){
+      res.status(200).send({ resultado: 'Se actualizo el carrito', message: updateCartProducts })
+    }else{
+      res.status(404).send({ error: `Not found cart` })  
+    }
+     }catch(error){
+      console.error("Error en cartRouter put:", error);
+      res.status(500).send({ error: "Error interno del servidor" });
+     }
 })
 
 //Actualizar la cantidad del carrito

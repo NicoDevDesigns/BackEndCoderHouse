@@ -17,11 +17,14 @@ import MessagesManager from "./dao/MongoDB/messageManagerMongo.js";
 
 
 
-const productManagerSocket = new ProductManagerMongo()
-const messagesManagerSocket = new MessagesManager();
+
 
 const app = express()
 const PORT = 8080;
+app.use(express.json())
+
+const productManagerSocket = new ProductManagerMongo()
+const messagesManagerSocket = new MessagesManager();
 
 //Conexion a Mongo
 mongoose.connect(process.env.MONGO_URL)
@@ -60,7 +63,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 //Middlewares
-app.use(express.json())
+
 app.use(express.urlencoded({ extended: true })) //URL extensas
 app.engine('handlebars', engine()) //Defino trabajar con hbs y guardo la config
 app.set('view engine', 'handlebars')//vistas y extension

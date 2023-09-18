@@ -8,20 +8,19 @@ const cartSchema = new Schema({
                 id_prod: {
                     type: Schema.Types.ObjectId, //Id autogenerado de MongoDB
                     ref: 'products',
-                    required: true
+                    required: true,
                 },
                 quantity: {
-                    type: Number
-                    //required: true //default: 1
-                }
-            }
+                    type: Number,
+                    required: true //default: 1
+                },
+            },
         ],
         default: function () {
-            return []
-        }
-    }
-}
-)
+            return [];
+        },
+    },
+});
 cartSchema.pre('findOne', function () {
     this.populate('products.id_prod')
 })
