@@ -11,9 +11,10 @@ import path from 'path'
 import mongoose from 'mongoose'
 //import productRouter from './routes/products2.routes.js'
 //import cartRouter from './routes/cart.routes.js'
-//import cartModel from './models/carts.models.js'
+import cartModel from './dao/models/carts.models.js'
 import ProductManagerMongo from "./dao/MongoDB/productManagerMongo.js"
 import MessagesManager from "./dao/MongoDB/messageManagerMongo.js";
+
 
 
 const productManagerSocket = new ProductManagerMongo()
@@ -24,7 +25,14 @@ const PORT = 8080;
 
 //Conexion a Mongo
 mongoose.connect(process.env.MONGO_URL)
-    .then(() => console.log("BDD conectada"))
+    .then(async() => {console.log("BDD conectada")
+        //await cartModel.create({})
+        //const resultado = await cartModel.findOne({_id:"6506ff427b83ee72898cfcae"}).populate('products.id_prod')
+        const resultado = await cartModel.findOne({_id:"6506ff427b83ee72898cfcae"})
+
+        console.log(JSON.stringify(resultado))
+        }
+    )
     .catch((error) => console.log("Error en conexion con MongoDB ATLAS: ", error))
 
 

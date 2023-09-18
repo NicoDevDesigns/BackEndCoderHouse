@@ -1,9 +1,23 @@
-import {cartModel} from "../models/carts.models.js"
+import cartModel from "../models/carts.models.js"
 import ProductManager from "../MongoDB/productManagerMongo.js"
 
 //const pm = new ProductManager()
 
 export default class CartManager {
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+/*
     getCarts = async () => {
         try {
             const carts = await cartModel.find();
@@ -27,12 +41,12 @@ export default class CartManager {
     
     addCart = async (products) => {
         try {
-            /*
+            
             let cartData = {};
             if (products && products.length > 0) {
                 cartData.products = products;
             }
-            */
+            
             const cart = await cartModel.create(products);
             return cart;
         } catch (err) {
@@ -62,7 +76,7 @@ export default class CartManager {
         }
     };
     
-
+*/
 };
 
 //export default CartManager;

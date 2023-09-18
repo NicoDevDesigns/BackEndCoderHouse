@@ -1,12 +1,36 @@
 import {Router} from "express"
 import CartManager from "../dao/MongoDB/cartManagerMongo.js"
 import ProductManager from "../dao/MongoDB/productManagerMongo.js"
+import cartModel from '../dao/models/carts.models.js'
 
 const cartManager = new CartManager()
 const productManager = new ProductManager()
  
 const cartRouter =Router()
+cartRouter.post("/:cid/products/:pid", async (req, res) => {
+  const { cid, pid } = req.params; 
+  const quantity = req.body;
+  console.log("el valor de quantity es: ",quantity)
+  
+  try {
+      const cart = await cartModel.findById(cid)
+      if (cart) {
+          cart.products.push({ id_prod: pid, quantity: 3 })
+          const respuesta = await cartModel.findByIdAndUpdate(cid, cart) //Actualizo el carrito de mi BDD con el nuevo producto
+          res.status(200).send({ respuesta: 'OK', mensaje: respuesta })
+      }
+  } catch (e) {
+      res.status(400).send({ error: e })
+  }
+})
 
+
+
+
+
+
+
+/*
 cartRouter.get("/carts",async(req,res)=>{
    const carrito=await cartManager.getCarts()
    res.json({carrito})
@@ -45,9 +69,10 @@ cartRouter.post('/carts', async (req, res) => {
       res.status(500).send('Internal Server Error');
   }
 });
-cartRouter.post("/carts/:cid/products/:pid", async (req, res) => {
-    const { cid, pid } = req.params;
-    const { quantity } = req.body;
+*/
+
+
+/*
   
     try {
       const checkIdProduct = await productManager.getProductById(pid);
@@ -70,7 +95,8 @@ cartRouter.post("/carts/:cid/products/:pid", async (req, res) => {
       console.error("Error occurred:", error);
       return res.status(500).send({ message: "An error occurred while processing the request" });
     }
-  });
+
+  });*/
 
   export default cartRouter
 /*
