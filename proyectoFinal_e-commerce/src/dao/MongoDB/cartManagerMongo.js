@@ -5,8 +5,25 @@ import ProductManager from "../MongoDB/productManagerMongo.js"
 
 export default class CartManager {
 
-  //Delete  
+    addProduct = async(cid)=>{
+        const cart = cartModel.findById(cid)
+        if (cart) {
+            cart.products.push({ id_prod: pid, quantity: 3 })
+            const respuesta = await cartModel.findByIdAndUpdate(cid, cart)
+            return respuesta
+        }
+    }
 
+//Eliminar todos los productos del carrito
+deleteCartAllProducts = async(cid)=>{
+    try{
+    const cartDelete = await cartModel.findByIdAndUpdate(cid,{products:[]})
+    return cartDelete
+    }catch(error){
+        console.error("Error en deleteCartAllProducts", error);
+        //throw error;
+    }
+}
 
 };
 

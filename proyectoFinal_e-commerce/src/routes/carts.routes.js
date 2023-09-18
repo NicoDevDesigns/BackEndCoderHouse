@@ -12,6 +12,8 @@ const cartRouter =Router()
 cartRouter.post("/:cid/products/:pid", async (req, res) => {
   const { cid, pid } = req.params; 
   const quantity = req.body;
+
+  
   console.log("el valor de quantity es: ",quantity)
   
   try {
@@ -33,10 +35,23 @@ cartRouter.delete("/:cid/products/:pid", async (req, res) => {
 //Eliminar todos los productos del carrito
 cartRouter.delete("/:cid",async(req,res) =>{
 
+  const {cid} = req.params
+ 
+  try{
+  const deleteCartProducts = await cartManager.deleteCartAllProducts(cid)
+  if(deleteCartProducts.products){
+      res.status(200).send({ resultado: 'Se elimino todos los productos del carrito', message: deleteCartProducts })
+  }else{
+     res.status(404).send({ error: `No hay not found cart` })  
+  }
+}catch(error){
+  console.error("Error en cartRouter delete:", error);
+  res.status(500).send({ error: "Error interno del servidor" });
+}
 })
 
 //Actualizar el carrito
-cartRouter.put("/:cid", async (req, res) => {
+cartRouter.put("/:cid", async (req, res) =>{
 
 })
 
