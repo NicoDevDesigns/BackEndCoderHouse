@@ -1,15 +1,12 @@
 import cartModel from "../models/carts.models.js"
 
 export default class CartManager {
-
-
-
+//Ingresar productos al carrito
     addProductCart = async(cid,pid,quantity)=>{
         try{
             const cart = await cartModel.findById(cid);
-            console.log("valor de quantity en addProduct: ",quantity)
             if (cart) {
-                cart.products.push({ id_prod: pid, quantity: quantity })
+                cart.products.push({ id_prod: pid, quantity: 22 })
                 const respuesta = await cartModel.findByIdAndUpdate(cid, cart)
                 return respuesta
             }
@@ -17,7 +14,7 @@ export default class CartManager {
             console.error("Error en addProductCart", error);
             }
     }
-
+//Agregar un carrito
     addCart = async()=>{
         try{
         const newCart = cartModel.create({})
@@ -26,11 +23,6 @@ export default class CartManager {
             console.error("Error en updateCartOneProduct", error);
         }
     }
-
-        /*
-
-*/        
-         
 
 //Eliminar todos los productos del carrito
 deleteCartAllProducts = async(cid)=>{
@@ -76,12 +68,12 @@ deleteProductCart = async(cid,pid)=>{
         */
 }
 
-//Actualizar el carrito
+//Actualizar el carrito con un arreglo
 updateCartAll = async(cid, updateCart)=>{
     try {
         const cart = await cartModel.findById(cid);
         updateCart.forEach(prod => {
-			const cartProduct = cart.products.find(cartProd => cartProd.id_prod._id == prod.id_prod);
+			const cartProduct = cart.products.find(cartProd => cartProd.id_prod == prod.id_prod);
 			if (cartProduct) {
 				cartProduct.quantity += prod.quantity;
 			} else {
@@ -93,7 +85,7 @@ updateCartAll = async(cid, updateCart)=>{
     } catch (error) {
         console.error("Error en updateCartAll", error);
     }
-}
+} 
 //Actualizar la cantidad del carrito
 updateCartOneProduct = async(cid,pid, quantity)=>{
     try {
@@ -103,6 +95,7 @@ updateCartOneProduct = async(cid,pid, quantity)=>{
 			if (product) {
 				product.quantity += quantity;
                 await cart.save();
+                return product
 			} else {
 				return "Error: El producto no existe en el carrito";
 			}	

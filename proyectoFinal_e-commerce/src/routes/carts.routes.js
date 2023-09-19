@@ -13,9 +13,7 @@ cartRouter.post("/:cid/products/:pid", async (req, res) => {
 
   const { cid, pid } = req.params; 
   const quantity = req.body;
-
-  console.log("el valor de quantity es: ",quantity)
-  
+ 
       try {
       const addNewProductCart = await cartManager.addProductCart(cid,pid,quantity)
       if(addNewProductCart){
@@ -79,13 +77,12 @@ cartRouter.delete("/:cid",async(req,res) =>{
 }
 })
 
-//Actualizar el carrito
+//Actualizar el carrito con un arreglo
 cartRouter.put("/:cid", async (req, res) =>{
-   
+     
     const {cid}= req.params
-    const {updateCart} = req.body
-    console.log("El valor del body es: ",updateCart)
-  
+    const updateCart = req.body
+ 
     try{
     const updateCartProducts = await cartManager.updateCartAll(cid,updateCart)
     if(updateCartProducts){
@@ -103,9 +100,11 @@ cartRouter.put("/:cid", async (req, res) =>{
 cartRouter.put("/:cid/products/:pid",async (req, res) => {
   const { cid, pid } = req.params;
 	const { quantity } = req.body;
+  console.log("valor de quantity: ",quantity)
 
   try{
     const updateProduct = await cartManager.updateCartOneProduct(cid,pid, quantity)
+    console.log("El valor de update: ", updateProduct)
     if(updateProduct){
       res.status(200).send({ resultado: 'Se actualizo el carrito', message: updateProduct })
     }else{
