@@ -2,22 +2,35 @@ import cartModel from "../models/carts.models.js"
 
 export default class CartManager {
 
-    addProduct = async(cid,pid,quantity)=>{
-        const cart = cartModel.findById(cid)
-        console.log(cart)
-        /*
-        try{
 
-        if (cart) {
-            cart.products.push({ id_prod: pid, quantity: quantity })
-            const respuesta = await cartModel.findByIdAndUpdate(cid, cart)
-            return respuesta
+
+    addProductCart = async(cid,pid,quantity)=>{
+        try{
+            const cart = await cartModel.findById(cid);
+            console.log("valor de quantity en addProduct: ",quantity)
+            if (cart) {
+                cart.products.push({ id_prod: pid, quantity: quantity })
+                const respuesta = await cartModel.findByIdAndUpdate(cid, cart)
+                return respuesta
+            }
+             }catch(error){
+            console.error("Error en addProductCart", error);
+            }
+    }
+
+    addCart = async()=>{
+        try{
+        const newCart = cartModel.create({})
+        return newCart
+        }catch(error){
+            console.error("Error en updateCartOneProduct", error);
         }
-         }catch(error){
-        console.error("Error en deleteCartAllProducts", error);
-        }
+    }
+
+        /*
+
 */        
-         }
+         
 
 //Eliminar todos los productos del carrito
 deleteCartAllProducts = async(cid)=>{
@@ -31,31 +44,12 @@ deleteCartAllProducts = async(cid)=>{
 }
 //eliminar del carrito el producto seleccionado
 deleteProductCart = async(cid,pid)=>{
-    console.log("el valor de cid: ",cid)
-    console.log("el valor de pid: ",pid)
-
     try {
         const cart = await cartModel.findById(cid);
-
-        if (cart) {
-            for (let i = 0; i < cart.products.length; i++) {
-                const producto = cart.products[i];
-                const idProd = producto.id_prod._id.toString(); // Convierte el ObjectId a una cadena
-                console.log(`Valor de id_prod del producto ${i}: ${idProd}`);
-            }
-        }
-        /*
-        if (cart) {
-            // Supongamos que hay al menos un producto en 'products'
-            const primerProducto = cart.products[0];
-            const idProd = primerProducto.id_prod;
-        
-            console.log(`Valor de id_prod del primer producto: ${idProd}`);
-        }
-        */
         if (cart) {
             const index = cart.products.findIndex(prod => prod.id_prod._id == pid);
-            console.log("el valor del index es: ",index)
+            //console.log("el valor del index es: ",index)
+            //console.log("el carrito es: ",cart.products[index])
             if (index!== -1) {
                 const deletedProduct = cart.products[index];
                 cart.products.splice(index, 1);
@@ -71,6 +65,15 @@ deleteProductCart = async(cid,pid)=>{
         console.error("Error en deleteProductCart", error);
         throw new Error("No existe ese producto"); // Propaga la excepción para que pueda ser manejada en la función principal
     }
+        /*
+        if (cart) {
+            for (let i = 0; i < cart.products.length; i++) {
+                const producto = cart.products[i];
+                const idProd = producto.id_prod._id.toString(); // Convierte el ObjectId a una cadena
+                console.log(`Valor de id_prod del producto ${i}: ${idProd}`);
+            }
+        }
+        */
 }
 
 //Actualizar el carrito

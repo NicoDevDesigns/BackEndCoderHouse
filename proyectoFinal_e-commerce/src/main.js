@@ -32,9 +32,9 @@ mongoose.connect(process.env.MONGO_URL)
         //await cartModel.create({})
         //const resultado = await cartModel.findOne({_id:"6506ff427b83ee72898cfcae"}).populate('products.id_prod')
         
-        const resultado = await cartModel.findOne({_id:"6506ff427b83ee72898cfcae"})
+        //const resultado = await cartModel.findOne({_id:"6506ff427b83ee72898cfcae"})
 
-        console.log(JSON.stringify(resultado))
+        //console.log(JSON.stringify(resultado))
         }
     )
     .catch((error) => console.log("Error en conexion con MongoDB ATLAS: ", error))

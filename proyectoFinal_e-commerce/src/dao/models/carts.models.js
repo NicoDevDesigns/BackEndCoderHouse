@@ -12,7 +12,7 @@ const cartSchema = new Schema({
                 },
                 quantity: {
                     type: Number,
-                    required: true //default: 1
+                    //required: true //default: 1
                 },
             },
         ],

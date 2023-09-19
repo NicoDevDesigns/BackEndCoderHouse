@@ -10,22 +10,38 @@ const cartRouter =Router()
 
 //Ingresar productos al carrito
 cartRouter.post("/:cid/products/:pid", async (req, res) => {
+
   const { cid, pid } = req.params; 
   const quantity = req.body;
+
   console.log("el valor de quantity es: ",quantity)
   
-  try {
-      const addProductCart = await cartManager.addProduct(cid,pid,quantity)
-      if(addProductCart){
-        res.status(200).send({ resultado: 'Se actualizo el carrito', message: addProductCart })
+      try {
+      const addNewProductCart = await cartManager.addProductCart(cid,pid,quantity)
+      if(addNewProductCart){
+        res.status(200).send({ resultado: 'Se agrego un producto al carrito', message: addNewProductCart })
       }else{
         res.status(404).send({ error: `Not found cart` })  
       }
        }catch(error){
-        console.error("Error en cartRouter put:", error);
+        console.error("Error en cartRouter post:", error);
         res.status(500).send({ error: "Error interno del servidor" });
        }
   })
+//Ingresar un carrito
+cartRouter.post("/",async(req,res)=>{
+  try {
+    const addNewCart = await cartManager.addCart()
+    if(addNewCart){
+      res.status(200).send({ resultado: 'Se actualizo el carrito', message: addNewCart })
+    }else{
+      res.status(404).send({ error: `don't create cart!` })  
+    }
+  } catch (error) {
+    console.error("Error en cartRouter post:", error);
+    res.status(500).send({ error: "Error interno del servidor" });
+  }
+})
   
 //eliminar del carrito el producto seleccionado
 cartRouter.delete("/:cid/products/:pid", async (req, res) => {
