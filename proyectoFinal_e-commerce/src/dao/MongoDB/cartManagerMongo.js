@@ -107,5 +107,30 @@ updateCartOneProduct = async(cid,pid, quantity)=>{
     }
 }
 
+//Mostrar los productos del carrito
+
+showProductCar = async(cid)=>{
+    try {
+        const cart = await cartModel.findById(cid);
+        if(cart){
+        console.log(JSON.stringify(cart))
+        return cart
+        }else{
+            return "Error: El carrito no existe";
+        }
+    }catch(error){
+        console.error("Error en updateCartOneProduct", error);
+    }
+    }
+    //Mostrar Carritos
+    showAllCarts = async()=>{
+        try {
+            const allCarts = await cartModel.find();
+            console.log(JSON.stringify(allCarts))
+            return allCarts
+        } catch (error) {
+            console.error("Error en showAllCarts", error);
+        }
+    }
 };
 

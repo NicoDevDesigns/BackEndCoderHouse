@@ -1,11 +1,8 @@
 import {Router} from "express"
 import CartManager from "../dao/MongoDB/cartManagerMongo.js"
-import ProductManager from "../dao/MongoDB/productManagerMongo.js"
-import cartModel from '../dao/models/carts.models.js'
 
 const cartManager = new CartManager()
-const productManager = new ProductManager()
- 
+
 const cartRouter =Router()
 
 //Ingresar productos al carrito
@@ -114,6 +111,37 @@ cartRouter.put("/:cid/products/:pid",async (req, res) => {
       console.error("Error en cartRouter put:", error);
       res.status(500).send({ error: "Error interno del servidor" });
      }
+})
+
+//Mostrar todos los productos del carrito
+cartRouter.get("/:cid",async(req,res)=>{
+  const {cid} = req.params
+  try {
+    const showCart = await cartManager.showProductCar(cid)
+  if(showCart){
+    res.status(200).send({ resultado: 'Ok', message: showCart })
+  }else{
+    res.status(404).send({ error: `Not found cart` })  
+  }
+   }catch(error){
+    console.error("Error en cartRouter get:", error);
+    res.status(500).send({ error: "Error interno del servidor" });
+   }
+})
+
+//Mostrar Carritos
+cartRouter.get("/",async(req,res)=>{
+  try {
+    const showAllCarts = await cartManager.showAllCarts()
+    if(showAllCarts){
+      res.status(200).send({ resultado: 'Ok', message: showAllCarts })
+    }else{
+      res.status(404).send({ error: `Not found cart` })  
+    }
+  } catch (error) {
+    console.error("Error en cartRouter get:", error);
+    res.status(500).send({ error: "Error interno del servidor" });
+  }
 })
 
 export default cartRouter

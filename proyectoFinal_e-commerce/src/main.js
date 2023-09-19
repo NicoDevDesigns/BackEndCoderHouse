@@ -9,14 +9,11 @@ import { __dirname } from './path.js'
 import path from 'path'
 //import ProductManager from './dao/fileSystem/controllers/ProductManager.js'; // Importa la clase ProductManager
 import mongoose from 'mongoose'
-//import productRouter from './routes/products2.routes.js'
-//import cartRouter from './routes/cart.routes.js'
+//import productRouter from './routes/productsFileSystem.routes.js'
+//import cartRouter from './routes/cartFileSystem.routes.js'
 import cartModel from './dao/models/carts.models.js'
 import ProductManagerMongo from "./dao/MongoDB/productManagerMongo.js"
 import MessagesManager from "./dao/MongoDB/messageManagerMongo.js";
-
-
-
 
 
 const app = express()
@@ -31,9 +28,6 @@ mongoose.connect(process.env.MONGO_URL)
     .then(async() => {console.log("BDD conectada")
         //await cartModel.create({})
         //const resultado = await cartModel.findOne({_id:"6506ff427b83ee72898cfcae"}).populate('products.id_prod')
-        
-        //const resultado = await cartModel.findOne({_id:"6506ff427b83ee72898cfcae"})
-
         //console.log(JSON.stringify(resultado))
         }
     )
