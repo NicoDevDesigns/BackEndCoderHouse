@@ -11,7 +11,7 @@ const cartRouter =Router()
 //Ingresar productos al carrito
 cartRouter.post("/:cid/products/:pid", async (req, res) => {
   const { cid, pid } = req.params; 
-  const quantity = req.body;
+    const quantity = req.body;
 
   
   console.log("el valor de quantity es: ",quantity)
@@ -29,7 +29,20 @@ cartRouter.post("/:cid/products/:pid", async (req, res) => {
 })
 //eliminar del carrito el producto seleccionado
 cartRouter.delete("/:cid/products/:pid", async (req, res) => {
-
+    const {cid,pid}=req.params
+    try {
+      const deleteProduct = await cartManager.deleteProductCart(cid,pid)
+      if (typeof deleteProduct === "string" && deleteProduct.startsWith("Error:")) {
+        res.status(404).send({ error: deleteProduct });
+    } else if (deleteProduct) {
+        res.status(200).send({ resultado: 'Se eliminó el producto del carrito', message: deleteProduct });
+    } else {
+        res.status(404).send({ error: `No se encontró el carrito` });
+    }
+    } catch (error) {
+      console.error("Error en cartRouter delete:", error);
+      res.status(500).send({ error: "Error interno del servidor" });
+    }
 })
 
 //Eliminar todos los productos del carrito
@@ -72,106 +85,20 @@ cartRouter.put("/:cid", async (req, res) =>{
 
 //Actualizar la cantidad del carrito
 cartRouter.put("/:cid/products/:pid",async (req, res) => {
+  const { cid, pid } = req.params;
+	const { quantity } = req.body;
 
-})
-
-
-export default cartRouter
-
-
-
-
-
-
-
-/*
-cartRouter.get("/carts",async(req,res)=>{
-   const carrito=await cartManager.getCarts()
-   res.json({carrito})
-})
-
-cartRouter.get("/carts/:cid",async(req,res)=>{
-    const carritofound=await cartManager.getCartbyId(req.params)
-    res.json({status:"success",carritofound})
-})
-
-
-
-cartRouter.post('/carts', async (req, res) => {
-  try {
-      const { obj } = req.body;
-
-      if (!Array.isArray(obj)) {
-          return res.status(400).send('Invalid request: products must be an array');
-      }
-
-      const validProducts = [];
-
-      for (const product of obj) {
-          const checkId = await productManager.getProductById(product._id);
-          if (checkId === null) {
-              return res.status(404).send(`Product with id ${product._id} not found`);
-          }
-          validProducts.push(checkId);
-      }
-
-      const cart = await cartManager.addCart(validProducts);
-      res.status(200).send(cart);
-
-  } catch (err) {
-      console.log(err);
-      res.status(500).send('Internal Server Error');
-  }
-});
-*/
-
-
-/*
-  
-    try {
-      const checkIdProduct = await productManager.getProductById(pid);
-      if (!checkIdProduct) {
-        return res.status(404).send({ message: `Product with ID: ${pid} not found` });
-      }
-  
-      const checkIdCart = await cartManager.getCartById(cid);
-      if (!checkIdCart) {
-        return res.status(404).send({ message: `Cart with ID: ${cid} not found` });
-      }
-  
-      const result = await cartManager.addProductInCart(cid, { _id: pid, quantity:quantity });
-      console.log(result);
-      return res.status(200).send({
-        message: `Product with ID: ${pid} added to cart with ID: ${cid}`,
-        cart: result,
-      });
-    } catch (error) {
-      console.error("Error occurred:", error);
-      return res.status(500).send({ message: "An error occurred while processing the request" });
+  try{
+    const updateProduct = await cartManager.updateCartOneProduct(cid,pid, quantity)
+    if(updateProduct){
+      res.status(200).send({ resultado: 'Se actualizo el carrito', message: updateProduct })
+    }else{
+      res.status(404).send({ error: `Not found cart` })  
     }
-
-  });*/
-
-
-/*
-import { Router } from "express";
-import cartModel from "../dao/models/carts.models.js";
-
-const cartRouter = Router()
-cartRouter.post('/:cid/products/:pid', async (req, res) => {
-    const { cid, pid } = req.params
-    const { quantity } = req.body
-    try {
-        const cart = await cartModel.findById(cid)
-        if (cart) {
-            cart.products.push({ id_prod: pid, quantity: quantity })
-            const respuesta = await cartModel.findByIdAndUpdate(cid, cart) //Actualizo el carrito de mi BDD con el nuevo producto
-            res.status(200).send({ respuesta: 'OK', mensaje: respuesta })
-        }
-    } catch (e) {
-        res.status(400).send({ error: e })
-    }
+     }catch(error){
+      console.error("Error en cartRouter put:", error);
+      res.status(500).send({ error: "Error interno del servidor" });
+     }
 })
 
 export default cartRouter
-*/
