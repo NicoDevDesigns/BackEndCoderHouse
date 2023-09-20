@@ -5,7 +5,7 @@ import ProductManager from "../dao/MongoDB/productManagerMongo.js"
 const productManager=new ProductManager()
 const productRouter = Router()
 
-//la ruta para probar http://localhost:8080/api/products?limit=4&page=2&sort=desc&category=Moto grande&status=false
+//la ruta para probar http://localhost:8080/api/products?limit=4&page=1&sort=desc&category=Moto grande&status=true
 productRouter.get("/",async(req,res)=>{
 
     const { limit = 10, page = 1, sort, category, status } = req.query
@@ -14,19 +14,18 @@ productRouter.get("/",async(req,res)=>{
     if (category) query.category = category;
     if (status) query.status = status;
   
+    try{
     const products= await productManager.getProducts(query, { limit, page, sort: sortOption })
-
-    if (products === 'error') {
-      res.status(500).send({ error: "Hubo un error al consultar productos." });
-    } else {
-      if (products.length === 0) {
-        res.status(400).send({ error: "No hay productos en la tienda." });
-      } else {
-        res.status(200).send({ resultado: 'OK', message: products });
-      }
-    }
-  })
-
+          if (typeof products != "string") {
+          res.status(200).send({ resultado: 'OK', message: products });
+          }else{
+            res.status(404).send({ error: `Error!`, message:products })  
+          }
+       }catch(error){
+            console.error("Error en productRouter get:", error);
+            res.status(500).send({ error: "Error interno del servidor" });
+          }
+        })
 productRouter.get('/:id', async (req, res) => {
     const { id } = req.params
         const product = await productModel.findById(id)

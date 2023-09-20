@@ -1,14 +1,24 @@
 import cartModel from "../models/carts.models.js"
+import mongoose from 'mongoose';
 
 export default class CartManager {
 //Ingresar productos al carrito
     addProductCart = async(cid,pid,quantity)=>{
         try{
+            if (!mongoose.Types.ObjectId.isValid(cid)) {
+                    return "Error: el formato del carrito no es válido";
+             }            
+             if (!mongoose.Types.ObjectId.isValid(pid)) {
+                return "Error: el formato del producto no es válido";
+             }
             const cart = await cartModel.findById(cid);
             if (cart) {
-                cart.products.push({ id_prod: pid, quantity: 22 })
-                const respuesta = await cartModel.findByIdAndUpdate(cid, cart)
-                return respuesta
+                cart.products.push({ id_prod: pid, quantity: quantity })
+                //const respuesta = await cartModel.findByIdAndUpdate(cid, cart)                    
+                await cart.save();
+                return cart
+            }else{
+                return "Not found Cart"
             }
              }catch(error){
             console.error("Error en addProductCart", error);
@@ -26,17 +36,32 @@ export default class CartManager {
 
 //Eliminar todos los productos del carrito
 deleteCartAllProducts = async(cid)=>{
-    try{
-    const cartDelete = await cartModel.findByIdAndUpdate(cid,{products:[]})
-    return cartDelete
+    
+    try{ 
+        if (!mongoose.Types.ObjectId.isValid(cid)) {
+            return "Error: el formato del carrito no es válido";
+        }  
+        const cart = await cartModel.findById(cid);    
+    if(cart){    
+        const cartDelete = await cartModel.findByIdAndUpdate(cid,{products:[]})
+        return cartDelete
+    }else{
+        return "Error: El carrito no existe";
+    }
     }catch(error){
-        console.error("Error en deleteCartAllProducts", error);
+        console.error("Error en deleteCartAllProducts",error);
         //throw error;
     }
 }
 //eliminar del carrito el producto seleccionado
 deleteProductCart = async(cid,pid)=>{
-    try {
+    try { 
+        if (!mongoose.Types.ObjectId.isValid(cid)) {
+            return "Error: el formato del carrito no es válido";
+        }            
+        if (!mongoose.Types.ObjectId.isValid(pid)) {
+        return "Error: el formato del producto no es válido";
+        }
         const cart = await cartModel.findById(cid);
         if (cart) {
             const index = cart.products.findIndex(prod => prod.id_prod._id == pid);
@@ -55,44 +80,51 @@ deleteProductCart = async(cid,pid)=>{
         }
     } catch (error) {
         console.error("Error en deleteProductCart", error);
-        throw new Error("No existe ese producto"); // Propaga la excepción para que pueda ser manejada en la función principal
-    }
-        /*
-        if (cart) {
-            for (let i = 0; i < cart.products.length; i++) {
-                const producto = cart.products[i];
-                const idProd = producto.id_prod._id.toString(); // Convierte el ObjectId a una cadena
-                console.log(`Valor de id_prod del producto ${i}: ${idProd}`);
-            }
-        }
-        */
+       // throw new Error("No existe ese producto"); // Propaga la excepción para que pueda ser manejada en la función principal
+    } 
 }
 
 //Actualizar el carrito con un arreglo
 updateCartAll = async(cid, updateCart)=>{
     try {
+        if (!mongoose.Types.ObjectId.isValid(cid)) {
+            return "Error: el formato del carrito no es válido";
+        }
         const cart = await cartModel.findById(cid);
-        updateCart.forEach(prod => {
+        if(cart){
+            updateCart.forEach(prod => {
 			const cartProduct = cart.products.find(cartProd => cartProd.id_prod == prod.id_prod);
 			if (cartProduct) {
 				cartProduct.quantity += prod.quantity;
 			} else {
 				cart.products.push(prod);
-			}
-		});
-		await cart.save();
-        return cart
+			} 
+		    });
+		    await cart.save();
+            return cart
+        }else{
+            return "Error: el carrito no existe"
+        }
+
     } catch (error) {
         console.error("Error en updateCartAll", error);
     }
 } 
+
+
 //Actualizar la cantidad del carrito
 updateCartOneProduct = async(cid,pid, quantity)=>{
     try {
+        if (!mongoose.Types.ObjectId.isValid(cid)) {
+            return "Error: el formato del carrito no es válido";
+        }            
+        if (!mongoose.Types.ObjectId.isValid(pid)) {
+        return "Error: el formato del producto no es válido";
+        }
         const cart = await cartModel.findById(cid);
         if (cart) {
 			const product = cart.products.find(prod => prod.id_prod._id == pid);
-			if (product) {
+			if (product!=undefined) {
 				product.quantity += quantity;
                 await cart.save();
                 return product
@@ -108,12 +140,13 @@ updateCartOneProduct = async(cid,pid, quantity)=>{
 }
 
 //Mostrar los productos del carrito
-
 showProductCar = async(cid)=>{
     try {
-        const cart = await cartModel.findById(cid);
+        if (!mongoose.Types.ObjectId.isValid(cid)) {
+            return "Error: el formato cid del carrito no es válido";
+        }          
+        const cart = await cartModel.findById(cid).populate('products.id_prod');
         if(cart){
-        console.log(JSON.stringify(cart))
         return cart
         }else{
             return "Error: El carrito no existe";
@@ -126,8 +159,12 @@ showProductCar = async(cid)=>{
     showAllCarts = async()=>{
         try {
             const allCarts = await cartModel.find();
-            console.log(JSON.stringify(allCarts))
-            return allCarts
+            if(allCarts){
+                //console.log(JSON.stringify(allCarts))
+                return allCarts
+            }else{
+                return "No hay carritos"
+            }
         } catch (error) {
             console.error("Error en showAllCarts", error);
         }

@@ -11,8 +11,23 @@ import  { productsModel }  from "../models/products.models.js"
       }
   }
 
-    getProducts = async (query, { limit, page, sort: sortOption }) => {
+getProducts = async (query, { limit, page, sort: sortOption }) => {
         try {
+              // Validar el argumento 'limit'
+              if (isNaN(limit) || parseInt(limit) <= 0) {
+                return "Error: 'limit' debe ser un número positivo.";
+              }
+
+              // Validar el argumento 'page'
+              if (isNaN(page) || parseInt(page) <= 0) {
+                return "Error: 'page' debe ser un número positivo.";
+              }
+
+              // Validar el argumento 'sortOption'
+              if (sortOption !== 'price' && sortOption !== '-price' && sortOption !== null) {
+                return "Error: 'sort' debe ser 'asc', 'desc' o null.";
+              }
+                
             const products = await productsModel.paginate(query, { limit, page, sort: sortOption });
             return products
         } catch (error) {
@@ -22,7 +37,7 @@ import  { productsModel }  from "../models/products.models.js"
     }
 
 
-  getProductById = async (id) => {
+getProductById = async (id) => {
     try {
         const prod = await productsModel.findById(id)
         return prod 
@@ -53,10 +68,7 @@ updateProduct = async (id, product) => {
 
 }
 
-    
-
-      
-      deleteProduct = async (id) => {
+deleteProduct = async (id) => {
         try {
             return await productsModel.findByIdAndDelete(id);
         } catch (error) {

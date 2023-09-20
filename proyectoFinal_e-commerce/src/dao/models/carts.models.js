@@ -8,7 +8,7 @@ const cartSchema = new Schema({
                 id_prod: {
                     type: Schema.Types.ObjectId, //Id autogenerado de MongoDB
                     ref: 'products',
-                    required: true,
+                    //required: true,
                 },
                 quantity: {
                     type: Number,
@@ -23,9 +23,6 @@ const cartSchema = new Schema({
 });
 
 cartSchema.pre('find', function () {
-    this.populate('products.id_prod')
-})
-cartSchema.pre('findById', function () {
     this.populate('products.id_prod')
 })
 
