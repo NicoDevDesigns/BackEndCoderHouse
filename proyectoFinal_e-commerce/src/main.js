@@ -15,6 +15,13 @@ import cartModel from './dao/models/carts.models.js'
 import ProductManagerMongo from "./dao/MongoDB/productManagerMongo.js"
 import MessagesManager from "./dao/MongoDB/messageManagerMongo.js";
 
+import userRouter from './routes/users.routes.js'
+import sessionRouter from './routes/sessions.routes.js'
+import cookieParser from 'cookie-parser'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
+
+
 
 const app = express()
 const PORT = 8080;
@@ -33,9 +40,11 @@ mongoose.connect(process.env.MONGO_URL)
     )
     .catch((error) => console.log("Error en conexion con MongoDB ATLAS: ", error))
 
-
+//Routes
 app.use('/api/products', productRouter)
 app.use('/api/carts', cartRouter)
+app.use('/api/users', userRouter)
+app.use('/api/sessions', sessionRouter)
 
 
 //Server
