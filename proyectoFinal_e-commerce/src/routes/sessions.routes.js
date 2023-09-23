@@ -6,6 +6,8 @@ const sessionRouter = Router()
 sessionRouter.post('/login', async (req, res) => {
     const { email, password } = req.body
 
+    //console.log("que es: ",req.session.login)
+
     try {
         if (req.session.login)
             res.status(200).send({ resultado: 'Login ya existente' })
@@ -26,6 +28,10 @@ sessionRouter.post('/login', async (req, res) => {
         res.status(400).send({ error: `Error en login: ${error}` })
     }
 })
+
+
+
+
 
 sessionRouter.get('/logout', (req, res) => {
     if (req.session.login) {
