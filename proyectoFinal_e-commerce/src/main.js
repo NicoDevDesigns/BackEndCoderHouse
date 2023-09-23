@@ -1,5 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
 import multer from 'multer'
 import {engine} from 'express-handlebars'
 import { Server } from 'socket.io'
@@ -18,8 +20,7 @@ import MessagesManager from "./dao/MongoDB/messageManagerMongo.js";
 import userRouter from './routes/users.routes.js'
 import sessionRouter from './routes/sessions.routes.js'
 import cookieParser from 'cookie-parser'
-import session from 'express-session'
-import MongoStore from 'connect-mongo'
+
 import FileStorage from 'session-file-store'
 
 
@@ -41,12 +42,6 @@ mongoose.connect(process.env.MONGO_URL)
         }
     )
     .catch((error) => console.log("Error en conexion con MongoDB ATLAS: ", error))
-
-//Routes
-app.use('/api/products', productRouter)
-app.use('/api/carts', cartRouter)
-app.use('/api/users', userRouter)
-app.use('/api/sessions', sessionRouter)
 
 
 //Server
@@ -81,13 +76,23 @@ app.use(session({ //Configuracion de la sesion de mi app
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-        ttl: 60 //Segundos, no en milisegundos
+        ttl: 30 //Segundos, no en milisegundos
     }),
     //store: new fileStorage({ path: './sessions', ttl: 10000, retries: 1 }),
     secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
 }))
+
+
+//Routes
+app.use('/api/products', productRouter)
+app.use('/api/carts', cartRouter)
+app.use('/api/users', userRouter)
+app.use('/api/sessions', sessionRouter)
+
+
+
 
 function auth(req, res, next) {
     console.log(req.session.email)
