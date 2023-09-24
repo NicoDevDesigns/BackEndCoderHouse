@@ -16,12 +16,11 @@ import mongoose from 'mongoose'
 import cartModel from './dao/models/carts.models.js'
 import ProductManagerMongo from "./dao/MongoDB/productManagerMongo.js"
 import MessagesManager from "./dao/MongoDB/messageManagerMongo.js";
-
 import userRouter from './routes/users.routes.js'
 import sessionRouter from './routes/sessions.routes.js'
 import cookieParser from 'cookie-parser'
-
 import FileStorage from 'session-file-store'
+import { userModel } from "./dao/models/users.models.js"
 
 
 
@@ -90,6 +89,8 @@ app.use('/api/products', productRouter)
 app.use('/api/carts', cartRouter)
 app.use('/api/users', userRouter)
 app.use('/api/sessions', sessionRouter)
+//Routes
+app.use('/static', express.static(path.join(__dirname, '/public'))) //path.join() es una concatenacion de una manera mas optima que con el +
 
 
 
@@ -171,11 +172,28 @@ app.get('/static/chat',(req,res)=>{
     });
 })
 
+app.get('/static/products', (req, res) => {
+	const user = req.session.user;
+	res.render('products', {
+		rutaCSS: 'products',
+		rutaJS: 'products',
+		user,
+	});
+});
 
+app.get('/static/login', (req, res) => {
+	res.render('login', {
+		rutaCSS: 'login',
+		rutaJS: 'login',
+	});
+});
 
-
-//Routes
-app.use('/static', express.static(path.join(__dirname, '/public'))) //path.join() es una concatenacion de una manera mas optima que con el +
+app.get('/static/signInUser', (req, res) => {
+	res.render('signInUser', {
+		rutaCSS: 'signInUser',
+		rutaJS: 'signInUser',
+	});
+});
 
 //socket con mongo
 io.on("connection",async(socket)=>{
@@ -199,7 +217,7 @@ io.on("connection",async(socket)=>{
        socket.emit("envioProductos", Productos)
         })
  
-      socket.on('mensaje', async info => {
+      socket.on('mensaje', async (info) => {
 		const { email, message } = info;
 		await messagesManagerSocket.createMessage({
 			email,
@@ -208,6 +226,18 @@ io.on("connection",async(socket)=>{
 		const messages = await messagesManagerSocket.getMessages();
 
 		socket.emit('mensajes', messages);
+	});
+//Ingresar y hacer sign in nuevo usuario
+    socket.on('signInUser', async (user) => {
+		const { email } = user;
+		const searchUser = await userModel.findOne({ email: email });
+
+		if (!searchUser) {
+			await userModel.create(user);
+			socket.emit('usuarioCreado', "Usuario creado");
+		} else {
+			socket.emit('existeUsuario', "Usuario existente");
+		}
 	});
 
 })

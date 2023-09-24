@@ -11,7 +11,7 @@ sessionRouter.post('/login', async (req, res) => {
             res.status(200).send({ resultado: 'Login ya existente' })
             return;
         }
-        if (email === 'nico@nico.com'){
+        if (email === 'adminCoder@coder.com'){
             if(password === '123'){
                 req.session.login = true;
 			    req.session.user = {
@@ -21,11 +21,11 @@ sessionRouter.post('/login', async (req, res) => {
 				email: email,
 				rol: 'admin',
 			    };
-            res.status(200).send({ resultado: 'Login exitoso', message: email })
-			//res.redirect('../../static/realTimeProducts');
+            //res.status(200).send({ resultado: 'Login exitoso', message: email })
+			res.redirect('../../static/products');
 			return;
             }else{
-                res.status(400).send({resultado: 'constraseña incorrecta'});
+                res.status(400).send({resultado: 'contraseña incorrecta'});
             }
         }else{
                    const user = await userModel.findOne({ email: email })
@@ -39,11 +39,11 @@ sessionRouter.post('/login', async (req, res) => {
 					email: user.email,
 					rol: user.rol,
 				};
-                res.status(200).send({ resultado: 'Login usuario comun', message: email })
-				//res.redirect('../../static/realTimeProducts');
+                //res.status(200).send({ resultado: 'Login usuario comun', message: email })
+				res.redirect('../../static/products');
                 return;
             } else {
-				res.status(400).send({resultado: 'constraseña incorrecta'
+				res.status(400).send({resultado: 'contraseña incorrecta'
 				});
 			}
         }else{
