@@ -59,7 +59,7 @@ sessionRouter.get('/logout', (req, res) => {
     if (req.session.login) {
         req.session.destroy()
     }
+    //res.redirect('http://localhost:8080/static/login'); 
     res.status(200).send({ resultado: 'Login eliminado' })
 })
-
 export default sessionRouter

@@ -12,7 +12,9 @@ form.addEventListener('submit', e => {
 socket.on('usuarioCreado', (mensaje) => {
     Swal.fire(
         mensaje
-    )
+    ).then(() => {
+    window.location.href = '/static/login';
+    })
 })
 
 socket.on('existeUsuario', (mensaje) => {
