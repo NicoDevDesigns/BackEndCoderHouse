@@ -21,6 +21,8 @@ import sessionRouter from './routes/sessions.routes.js'
 import cookieParser from 'cookie-parser'
 import FileStorage from 'session-file-store'
 import { userModel } from "./dao/models/users.models.js"
+import passport from 'passport'
+import initializePassport from './config/passport.js'
 
 
 
@@ -82,6 +84,10 @@ app.use(session({ //Configuracion de la sesion de mi app
     resave: true,
     saveUninitialized: true
 }))
+
+initializePassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 
 //Routes
