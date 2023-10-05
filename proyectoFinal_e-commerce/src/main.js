@@ -184,6 +184,7 @@ io.on("connection",async(socket)=>{
 		socket.emit('mensajes', messages);
 	});
 //Ingresar y hacer sign in nuevo usuario
+/*
     socket.on('signInUser', async (user) => {
 		const { email } = user;
 		const searchUser = await userModel.findOne({ email: email });
@@ -195,7 +196,7 @@ io.on("connection",async(socket)=>{
 			socket.emit('existeUsuario', "Usuario existente");
 		}
 	});
-
+*/
 })
 
 

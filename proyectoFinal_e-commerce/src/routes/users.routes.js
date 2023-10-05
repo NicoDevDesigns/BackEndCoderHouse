@@ -50,7 +50,9 @@ userRouter.post('/', async (req, res) => {
             password: hashPassword,
             age: age
         })
-        res.status(200).send({ mensaje: 'Usuario creado', respuesta: response })
+        res.redirect('../../static/login');
+        return;
+        //res.status(200).send({ mensaje: 'Usuario creado', respuesta: response })
     } catch (error) {
         res.status(400).send({ error: `Error en create user: ${error}` })
     }

@@ -1,3 +1,4 @@
+/*
 const socket = io();
 
 const form = document.getElementById('signIn')
@@ -22,3 +23,4 @@ socket.on('existeUsuario', (mensaje) => {
         mensaje
     )
 })
+*/
