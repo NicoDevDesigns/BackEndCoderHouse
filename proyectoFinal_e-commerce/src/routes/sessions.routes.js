@@ -2,6 +2,8 @@ import { Router } from "express";
 import { userModel } from "../dao/models/users.models.js";
 import { validatePassword } from "../utils/bcrypt.js";
 import passport from "passport";
+import { passportError, authorization } from "../utils/messageErrors.js";
+import { generateToken } from "../utils/jwt.js";
 
 const sessionRouter = Router()
 
@@ -67,7 +69,7 @@ sessionRouter.post('/login', async (req, res) => {
     "password":"123"
     }
 */
-
+/*
     sessionRouter.post('/login', async (req, res) => {
     const { email, password } = req.body
 
@@ -92,11 +94,10 @@ sessionRouter.post('/login', async (req, res) => {
         res.status(400).send({ error: `Error en login: ${error}` })
     }
 })
+*/
 
 
-
-//Autenticacion con github
-/*
+//Autenticacion
 sessionRouter.post('/login', passport.authenticate('login'), async (req, res) => {
     try {
         if (!req.user) {
@@ -110,10 +111,29 @@ sessionRouter.post('/login', passport.authenticate('login'), async (req, res) =>
             email: req.user.email
         }
 
+        const token = generateToken(req.user)
+        res.cookie('jwtCookie', token, {
+            maxAge: 43200000
+        })
+
         res.status(200).send({ payload: req.user })
     } catch (error) {
         res.status(500).send({ mensaje: `Error al iniciar sesion ${error}` })
     }
+})
+
+sessionRouter.get('/testJWT', passport.authenticate('jwt', { session: true }), async (req, res) => {
+    res.status(200).send({ mensaje: req.user })
+    req.session.user = {
+        first_name: req.user.user.first_name,
+        last_name: req.user.user.last_name,
+        age: req.user.user.age,
+        email: req.user.user.email
+    }
+})
+
+sessionRouter.get('/current', passportError('jwt'), authorization('user'), (req, res) => {
+    res.send(req.user)
 })
 
 
@@ -126,15 +146,16 @@ sessionRouter.get('/githubSession', passport.authenticate('github'), async (req,
     req.session.user = req.user
     res.status(200).send({ mensaje: 'Session creada' })
 })
-*/
+
 sessionRouter.get('/logout', (req, res) => {
 
     //if (req.session.login) 
     if (req.session){
         req.session.destroy()
     }
-    console.log(req.session)
+    //console.log(req.session)
     //res.redirect('http://localhost:8080/static/login'); 
+    res.clearCookie('jwtCookie')
     res.status(200).send({ resultado: 'Login eliminado' })
 })
 export default sessionRouter

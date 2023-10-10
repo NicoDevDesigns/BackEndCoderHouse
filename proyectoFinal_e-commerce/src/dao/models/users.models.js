@@ -26,7 +26,24 @@ const userSchema = new Schema({
     age: {
         type: Number,
         required: true
+    },
+    cart: {//Se agrega un nuevo campo
+        type: Schema.Types.ObjectId,
+        ref: 'carts'
     }
 })
+
+userSchema.pre('save', async function (next) {
+
+    try {
+        const newCart = await cartModel.create({})
+        this.cart = newCart._id
+    } catch (error) {
+        next(error)
+    }
+
+})
+
+
 
 export const userModel = model('users', userSchema)

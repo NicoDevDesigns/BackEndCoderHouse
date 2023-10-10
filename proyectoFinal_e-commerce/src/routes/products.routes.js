@@ -55,6 +55,23 @@ productRouter.post('/', async (req, res) => {
 
 })
 
+/*
+
+productRouter.post('/', passportError('jwt'), authorization('Admin'), async (req, res) => {
+    const { title, description, stock, code, price, category } = req.body
+
+    try {
+        const respuesta = await productModel.create({
+            title, description, stock, code, price, category
+        })
+
+        res.status(200).send({ resultado: 'OK', message: respuesta })
+    } catch (error) {
+        res.status(400).send({ error: `Error al crear producto: ${error}` })
+    }
+})
+*/
+
 productRouter.put('/:id', async (req, res) => {
     const { id } = req.params
     const { obj } = req.body
