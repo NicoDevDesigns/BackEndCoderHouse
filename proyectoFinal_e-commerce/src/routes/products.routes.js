@@ -1,6 +1,8 @@
 import { Router } from "express";
 //import productModel from "../models/products.models.js";
 import ProductManager from "../dao/MongoDB/productManagerMongo.js"
+//import { authenticate } from "passport";
+import {passportError,authorization} from "../utils/messageErrors.js"
 
 const productManager=new ProductManager()
 const productRouter = Router()
@@ -41,7 +43,7 @@ productRouter.get('/:id', async (req, res) => {
       }
 })
 
-productRouter.post('/', async (req, res) => {
+productRouter.post('/',passportError('jwt'),authorization('admin'), async (req, res) => {
         const obj=req.body
         const newProduct = await productManager.addProduct(obj);
 

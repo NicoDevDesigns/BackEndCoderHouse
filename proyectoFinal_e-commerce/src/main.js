@@ -5,26 +5,27 @@ import MongoStore from 'connect-mongo'
 import multer from 'multer'
 import {engine} from 'express-handlebars'
 import { Server } from 'socket.io'
-import productRouter from './routes/products.routes.js'
-import cartRouter from './routes/carts.routes.js'; // Importa el enrutador del carrito
 import { __dirname } from './path.js'
 import path from 'path'
-//import ProductManager from './dao/fileSystem/controllers/ProductManager.js'; // Importa la clase ProductManager
 import mongoose from 'mongoose'
-//import productRouter from './routes/productsFileSystem.routes.js'
-//import cartRouter from './routes/cartFileSystem.routes.js'
 import cartModel from './dao/models/carts.models.js'
 import ProductManagerMongo from "./dao/MongoDB/productManagerMongo.js"
 import MessagesManager from "./dao/MongoDB/messageManagerMongo.js";
-import userRouter from './routes/users.routes.js'
-import sessionRouter from './routes/sessions.routes.js'
+import router from './routes/main.routes.js'
 import cookieParser from 'cookie-parser'
 import FileStorage from 'session-file-store'
 import { userModel } from "./dao/models/users.models.js"
 import passport from 'passport'
 import initializePassport from './config/passport.js'
-
-
+/*
+import ProductManager from './dao/fileSystem/controllers/ProductManager.js'; // Importa la clase ProductManager
+import productRouter from './routes/productsFileSystem.routes.js'
+import cartRouter from './routes/cartFileSystem.routes.js'
+import productRouter from './routes/products.routes.js'
+import cartRouter from './routes/carts.routes.js'; // Importa el enrutador del carrito
+import userRouter from './routes/users.routes.js'
+import sessionRouter from './routes/sessions.routes.js'
+*/
 
 const app = express()
 const fileStorage = FileStorage(session)
@@ -65,14 +66,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 //Middlewares
-
 app.use(express.urlencoded({ extended: true })) //URL extensas
 app.engine('handlebars', engine()) //Defino trabajar con hbs y guardo la config
 app.set('view engine', 'handlebars')//vistas y extension
 app.set('views', path.resolve(__dirname, './views'))//indica la localizacion de las vistas se encuentra en views
 
 
-app.use(cookieParser(process.env.SIGNED_COOKIE)) //Firmo la cookie
+app.use(cookieParser(process.env.JWT_SECRET)) //Firmo la cookie
 app.use(session({ //Configuracion de la sesion de mi app
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL,
@@ -91,24 +91,14 @@ app.use(passport.session())
 
 
 //Routes
+app.use('/',router)
+app.use('/static', express.static(path.join(__dirname, '/public'))) //path.join() es una concatenacion de una manera mas optima que con el +
+/*
 app.use('/api/products', productRouter)
 app.use('/api/carts', cartRouter)
 app.use('/api/users', userRouter)
 app.use('/api/sessions', sessionRouter)
-app.use('/static', express.static(path.join(__dirname, '/public'))) //path.join() es una concatenacion de una manera mas optima que con el +
-
-
-
-//Cookies
-app.get('/setCookie', (req, res) => {
-    res.cookie('CookieCookie', 'Esto es el valor de una cookie', { maxAge: 60000, signed: true }).send('Cookie creada') //Cookie de un minuto firmada
-})
-
-app.get('/getCookie', (req, res) => {
-    res.send(req.signedCookies) //Consultar solo las cookies firmadas
-    //res.send(req.cookies) Consultar TODAS las cookies
-})
-
+*/
 
 // Renderizar la vista "realTimeProducts.handlebars" con el formulario para agregar productos
 //http://localhost:8080/static/realTimeProducts
@@ -200,8 +190,19 @@ io.on("connection",async(socket)=>{
 })
 
 
+/*
+//Cookies
+app.get('/setCookie', (req, res) => {
+    res.cookie('CookieCookie', 'Esto es el valor de una cookie', { maxAge: 60000, signed: true }).send('Cookie creada') //Cookie de un minuto firmada
+})
 
-
+app.get('/getCookie', (req, res) => {
+    res.send(req.signedCookies) //Consultar solo las cookies firmadas
+    //res.send(req.cookies) Consultar TODAS las cookies
+})
+*/
+//Process
+console.log(process.argv)
 
 
 
