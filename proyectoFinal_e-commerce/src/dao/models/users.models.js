@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import cartModel from "./carts.models.js";
 
 const userSchema = new Schema({
     first_name: {
@@ -43,7 +44,5 @@ userSchema.pre('save', async function (next) {
     }
 
 })
-
-
 
 export const userModel = model('users', userSchema)

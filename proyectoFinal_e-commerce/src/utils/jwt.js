@@ -11,7 +11,7 @@ export const generateToken = (user) => {
     return token
 }
 
-console.log(generateToken({ "_id": "650cc75f82d8d6a40adf8ba4", "first_name": "Panchito", "last_name": "Perez", "email": "perez@perez.com", "password": "$2b$15$ycmPZjoPYwD5Pb2hpId4PO6PjnWO7R5iMM8X2Vcxw9kMMbMVtWEIe", "rol": "user", "age": { "$numberInt": "40" } }))
+console.log("***************Token Generado en jwt.js************************\n",generateToken({ "_id": "650cc75f82d8d6a40adf8ba4", "first_name": "Panchito", "last_name": "Perez", "email": "perez@perez.com", "password": "$2b$15$ycmPZjoPYwD5Pb2hpId4PO6PjnWO7R5iMM8X2Vcxw9kMMbMVtWEIe", "rol": "user", "age": { "$numberInt": "40" } }),"\n**********************************************************")
 
 export const authToken = (req, res, next) => {
     //Consulto el header

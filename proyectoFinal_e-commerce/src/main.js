@@ -9,14 +9,15 @@ import { __dirname } from './path.js'
 import path from 'path'
 import mongoose from 'mongoose'
 import cartModel from './dao/models/carts.models.js'
-import ProductManagerMongo from "./dao/MongoDB/productManagerMongo.js"
-import MessagesManager from "./dao/MongoDB/messageManagerMongo.js";
+import ProductManagerMongo from "./dao/controllers/productManagerMongo.js"
+import MessagesManager from "./dao/controllers/messageManagerMongo.js";
 import router from './routes/main.routes.js'
 import cookieParser from 'cookie-parser'
 import FileStorage from 'session-file-store'
 import { userModel } from "./dao/models/users.models.js"
 import passport from 'passport'
 import initializePassport from './config/passport.js'
+import config from "./config.js";
 /*
 import ProductManager from './dao/fileSystem/controllers/ProductManager.js'; // Importa la clase ProductManager
 import productRouter from './routes/productsFileSystem.routes.js'
@@ -29,14 +30,14 @@ import sessionRouter from './routes/sessions.routes.js'
 
 const app = express()
 const fileStorage = FileStorage(session)
-const PORT = 8080;
+//const PORT = 8080;
 app.use(express.json())
 
 const productManagerSocket = new ProductManagerMongo()
 const messagesManagerSocket = new MessagesManager();
 
 //Conexion a Mongo
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(config.mongoURL)
     .then(async() => {console.log("BDD conectada")
         //await cartModel.create({})
         //const resultado = await cartModel.findOne({_id:"6506ff427b83ee72898cfcae"}).populate('products.id_prod')
@@ -47,8 +48,8 @@ mongoose.connect(process.env.MONGO_URL)
 
 
 //Server
-const server = app.listen(PORT, () => {
-    console.log(`Server on port ${PORT}`)
+const server = app.listen(config.port, () => {
+    console.log(`Server on port ${config.port}`)
 })
 const io = new Server(server) //Necesita saber la configuracion de los servidores
 
@@ -72,15 +73,15 @@ app.set('view engine', 'handlebars')//vistas y extension
 app.set('views', path.resolve(__dirname, './views'))//indica la localizacion de las vistas se encuentra en views
 
 
-app.use(cookieParser(process.env.JWT_SECRET)) //Firmo la cookie
+app.use(cookieParser(config.jwtSecret)) //Firmo la cookie
 app.use(session({ //Configuracion de la sesion de mi app
     store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URL,
+        mongoUrl: config.mongoURL,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
         ttl: 30 //Segundos, no en milisegundos
     }),
     //store: new fileStorage({ path: './sessions', ttl: 10000, retries: 1 }),
-    secret: process.env.SESSION_SECRET,
+    secret: config.sessionSecret,
     resave: true,
     saveUninitialized: true
 }))
@@ -189,7 +190,6 @@ io.on("connection",async(socket)=>{
 */
 })
 
-
 /*
 //Cookies
 app.get('/setCookie', (req, res) => {
@@ -202,7 +202,7 @@ app.get('/getCookie', (req, res) => {
 })
 */
 //Process
-console.log(process.argv)
+//console.log(process.argv)
 
 
 
