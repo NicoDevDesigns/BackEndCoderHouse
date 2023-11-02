@@ -1,4 +1,4 @@
-import productsModel from '../models/products.models.js'
+import {productsModel} from '../models/products.models.js'
 
 export const getProducts = async (req, res) => {
     const { limit, page, filter, sort } = req.query

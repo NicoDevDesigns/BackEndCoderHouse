@@ -27,7 +27,7 @@ export default class CartManager {
 //Agregar un carrito
     addCart = async()=>{
         try{
-        const newCart = cartModel.create({})
+        const newCart = await cartModel.create({})
         return newCart
         }catch(error){
             console.error("Error en updateCartOneProduct", error);

@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import local from 'passport-local' //Estrategia
 import passport from 'passport' //Manejador de las estrategias
 import GithubStrategy from 'passport-github2'
@@ -18,7 +19,7 @@ const initializePassport = () => {
         console.log(req.cookies)
         //{} no hay cookies != no exista mi cookie
         //Si existen cookies, consulte por mi cookie y sino asigno {}
-        const token = req.cookies ? req.cookies.jwtCookie : {}
+        const token = req.headers.authorization ? req.headers.authorization : {}
         console.log(token)
         return token
     }
