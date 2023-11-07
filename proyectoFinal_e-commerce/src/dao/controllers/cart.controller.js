@@ -74,17 +74,18 @@ export const postCartProduct = async (req, res) => {
 export const deleteCart = async (req, res) => {
       const {cid} = req.params
       try{
+        
         if (!mongoose.Types.ObjectId.isValid(cid)) {
          res.status(404).send({ error: `Error: el formato cid del carrito no es válido`}) 
         } 
-        const deleteCartProducts = await cartModel.findById(cid);
-        if(deleteCartProducts){
-            res.status(200).send({ resultado: 'Se elimino todos los productos del carrito', message: deleteCartProducts })
+        const cartDelete = await cartModel.findByIdAndDelete(cid)
+        if(cartDelete){
+          res.status(200).send({ resultado: 'Se elimino el carrito', message: cartDelete })
         }else{
-           res.status(404).send({ error: `Error`,menssage: deleteCartProducts })  
+           res.status(404).send({ error: `Error`,menssage: cartDelete })  
         }
       }catch(error){
-        console.error("Error en cartRouter delete:", error);
+        console.error("Error en deleteCart:", error);
         res.status(500).send({ error: "Error interno del servidor" });
       }
 }
@@ -97,16 +98,46 @@ export const deleteCartProduct = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(pid)) {
             res.status(404).send({ error: `Error: el formato del producto no es válido`}) 
         }
-      const deleteProduct = await cartModel.findById(cid);
-      if (deleteProduct) {
-        res.status(200).send({ resultado: 'Se eliminó el producto del carrito', message: deleteProduct });
+      const deleteProductCart = await cartModel.findById(cid);
+
+      if (deleteProductCart) {
+        const index = deleteProductCart.products.findIndex(prod => prod.id_prod._id == pid);
+
+        if (index!== -1) {
+            const deleteProduct = deleteProductCart.products[index];
+            deleteProductCart.products.splice(index, 1);
+            await deleteProductCart.save();
+            res.status(200).send({ resultado: 'Se eliminó el producto del carrito', message: deleteProduct });
         } else {
-        res.status(404).send({ resultado:"Error",menssage: deleteProduct });
-        } 
+            res.status(404).send({ resultado:"Error: El producto no existe en el carrito"});
+        }
+    } else {
+      res.status(404).send({ resultado:"Error: No se encontró el carrito"});
+    }
     } catch (error) {
       console.error("Error en cartRouter delete:", error);
       res.status(500).send({ error: "Error interno del servidor" });
     }
+}
+
+export const deleteCartAllProducts = async (req, res) => {
+  const {cid} = req.params
+  try{
+    
+    if (!mongoose.Types.ObjectId.isValid(cid)) {
+     res.status(404).send({ error: `Error: el formato cid del carrito no es válido`}) 
+    } 
+    const deleteProducts = await cartModel.findById(cid);    
+    if(deleteProducts){    
+        const deleteAll = await cartModel.findByIdAndUpdate(cid,{products:[]})
+        res.status(200).send({ resultado: 'Se elimino todos los productos del carrito', message: deleteAll })
+    }else{
+        res.status(404).send({ error: `Error: El carrito no existe`})
+         }
+  }catch(error){
+    //console.error("Error en deleteCartAllProducts:", error);
+    res.status(500).send({ msg: "Error en deleteCartAllProducts", error: "Error interno del servidor" });
+  }
 }
 
 export const putCart = async (req, res)=>{
