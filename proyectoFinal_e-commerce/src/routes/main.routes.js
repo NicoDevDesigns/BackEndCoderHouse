@@ -4,12 +4,6 @@ import productRouter from "./productsController.routes.js";
 import sessionRouter from "./sessions.routes.js";
 import userRouter from "./users.routes.js";
 import routerTicket from "./tickets.routes.js";
-/* 
-import productRouter from './routes/products.routes.js'
-import cartRouter from './routes/carts.routes.js'; // Importa el enrutador del carrito
-import userRouter from './routes/users.routes.js'
-import sessionRouter from './routes/sessions.routes.js'
-*/
 
 const router = Router()
 

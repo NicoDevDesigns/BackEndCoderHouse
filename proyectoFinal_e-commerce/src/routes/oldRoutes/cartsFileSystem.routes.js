@@ -1,7 +1,7 @@
 import { Router } from 'express';
 // Importa tu manejador de carrito
 //import { CartManager } from './CartManager.js'; 
-import CartManager from '../dao/fileSystem/controllers/CartManager.js';
+import CartManager from '../../dao/fileSystem/controllers/CartManager.js';
 
 
 const cartManager = new CartManager('src/models/carrito.txt');

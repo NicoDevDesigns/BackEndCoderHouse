@@ -8,25 +8,14 @@ import { Server } from 'socket.io'
 import { __dirname } from './path.js'
 import path from 'path'
 import mongoose from 'mongoose'
-import cartModel from './dao/models/carts.models.js'
-import ProductManagerMongo from "./dao/controllers/productManagerMongo.js"
-import MessagesManager from "./dao/controllers/messageManagerMongo.js";
+import ProductManagerMongo from "./dao/controllers/managerMongo/productManagerMongo.js"
+import MessagesManager from "./dao/controllers/managerMongo/messageManagerMongo.js";
 import router from './routes/main.routes.js'
 import cookieParser from 'cookie-parser'
 import FileStorage from 'session-file-store'
-import { userModel } from "./dao/models/users.models.js"
 import passport from 'passport'
 import initializePassport from './config/passport.js'
 import config from "./config.js";
-/*
-import ProductManager from './dao/fileSystem/controllers/ProductManager.js'; // Importa la clase ProductManager
-import productRouter from './routes/productsFileSystem.routes.js'
-import cartRouter from './routes/cartFileSystem.routes.js'
-import productRouter from './routes/products.routes.js'
-import cartRouter from './routes/carts.routes.js'; // Importa el enrutador del carrito
-import userRouter from './routes/users.routes.js'
-import sessionRouter from './routes/sessions.routes.js'
-*/
 
 const app = express()
 const fileStorage = FileStorage(session)
@@ -52,8 +41,6 @@ const server = app.listen(config.port, () => {
     console.log(`Server on port ${config.port}`)
 })
 const io = new Server(server) //Necesita saber la configuracion de los servidores
-
-//const productManager = new ProductManager('src/models/productos.txt');
 
 //Multer
 const storage = multer.diskStorage({
@@ -94,12 +81,7 @@ app.use(passport.session())
 //Routes
 app.use('/',router)
 app.use('/static', express.static(path.join(__dirname, '/public'))) //path.join() es una concatenacion de una manera mas optima que con el +
-/*
-app.use('/api/products', productRouter)
-app.use('/api/carts', cartRouter)
-app.use('/api/users', userRouter)
-app.use('/api/sessions', sessionRouter)
-*/
+
 
 // Renderizar la vista "realTimeProducts.handlebars" con el formulario para agregar productos
 //http://localhost:8080/static/realTimeProducts
@@ -174,73 +156,5 @@ io.on("connection",async(socket)=>{
 
 		socket.emit('mensajes', messages);
 	});
-//Ingresar y hacer sign in nuevo usuario
-/*
-    socket.on('signInUser', async (user) => {
-		const { email } = user;
-		const searchUser = await userModel.findOne({ email: email });
-
-		if (!searchUser) {
-			await userModel.create(user);
-			socket.emit('usuarioCreado', "Usuario creado");
-		} else {
-			socket.emit('existeUsuario', "Usuario existente");
-		}
-	});
-*/
 })
 
-/*
-//Cookies
-app.get('/setCookie', (req, res) => {
-    res.cookie('CookieCookie', 'Esto es el valor de una cookie', { maxAge: 60000, signed: true }).send('Cookie creada') //Cookie de un minuto firmada
-})
-
-app.get('/getCookie', (req, res) => {
-    res.send(req.signedCookies) //Consultar solo las cookies firmadas
-    //res.send(req.cookies) Consultar TODAS las cookies
-})
-*/
-//Process
-//console.log(process.argv)
-
-
-
-//rutas de fileSystem
-//app.use('/api/product',routerProd)   // ruta productos
-//app.use('/api/carts', routerCart);     // ruta carritos
-
-//Usando fileSystem
-//Conexion con Socket.io
-/*
-io.on('connection', (socket) => {
-    console.log('Conexion con Socket.io');
-
-    socket.on('nuevoProducto', async (prod) => {
-        await productManager.addProduct(prod);
-        const products = await productManager.getProducts();
-        socket.emit('productosActualizados', products);
-        socket.emit('mensajeProductoCreado', 'El producto se creó correctamente');
-    });
-});
-*/
-// Renderizar la vista "home.handlebars" con la lista de productos
-//Direccion http://localhost:8080/static/home
-/*
-app.get('/static/home', async (req, res) => {
-    const productos = await productManager.getProducts();
-
-    res.render('home', {
-        titulo: 'Lista de Productos',
-        rutaCSS: 'home',
-        rutaJS: 'home',
-        productos: productos,
-    });
-});
-*/
-
-/*
-app.listen(PORT, () => {
-    console.log(`Server on port ${PORT}`)
-})
-*/

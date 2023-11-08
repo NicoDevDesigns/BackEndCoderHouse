@@ -1,4 +1,4 @@
-import  { productsModel }  from "../models/products.models.js"
+import  { productsModel }  from "../../models/products.models.js"
 
   export default class ProductManagerMongo{
 

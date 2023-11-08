@@ -1,4 +1,6 @@
 import cartModel from "../models/carts.models.js";
+import {productsModel} from "../models/products.models.js"
+import { userModel } from "../models/users.models.js";
 import mongoose from 'mongoose';
 
 export const getCarts = async (req, res) => {
@@ -52,11 +54,19 @@ export const postCartProduct = async (req, res) => {
       const { cid, pid } = req.params; 
       const quantity = req.body.quantity;
       try {
+
+        const cartRol = await cartModel.findById(cid);
+        const userRol = await userModel.findOne({ cart: cartRol._id });
+       
+        if (userRol.rol === 'admin') {
+          return res.status(403).json({ message: 'Los administradores no pueden ingresar productos' });
+           }
+
         if (!mongoose.Types.ObjectId.isValid(cid)) {
-          return "Error: el formato del carrito no es válido";
+          res.status(404).send({ error: `Error: el formato cid del carrito no es válido`}) 
             }            
         if (!mongoose.Types.ObjectId.isValid(pid)) {
-      return "Error: el formato del producto no es válido";
+          res.status(404).send({ error: `Error: el formato del producto no es válido`}) 
             }
       const addNewProductCart = await cartModel.findById(cid);
       if(addNewProductCart){
@@ -196,11 +206,75 @@ export const putCartProduct = async (req, res) => {
       res.status(500).send({ error: "Error interno del servidor" });
      }
 }
+
+export const cartPurchase = async (req, res) => {
+  const { cid } = req.params;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(cid)) {
+      return res.status(404).send({ error: `Error: el formato cid del carrito no es válido` });
+    }
+
+    const cart = await cartModel.findById(cid);
+    const products = await productsModel.find();
+
+    if (!cart) {
+      return res.status(404).send({ resultado: 'Not Found cart' });
+    }
+
+    const email = await getEmailFromCart(cart);
+    const { purchaseItems, failedProducts } = await processCartPurchase(cart.products, products);
+
+    // Actualiza el carrito con los productos que no se pudieron comprar
+    await cartModel.findByIdAndUpdate(cid, { products: failedProducts });
+
+    // Genera un ticket con los datos de la compra
+    const amount = purchaseItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    // Llama al servicio de Tickets para generar el ticket con amount y email
+
+    res.redirect(`http://localhost:8080/api/tickets/?amount=${amount}&email=${email}`);
+  } catch (error) {
+    res.status(500).send({ error: `Error del servidor en cartPurchase: ${error}` });
+  }
+};
+
+async function getEmailFromCart(cart) {
+  const user = await userModel.findOne({ cart: cart._id });
+  return user.email;
+}
+
+async function processCartPurchase(cartProducts, allProducts) {
+  const purchaseItems = [];
+  const failedProducts = [];
+
+  for (const cartProduct of cartProducts) {
+    const product = allProducts.find(prod => prod._id == cartProduct.id_prod.toString());
+
+    if (product && product.stock >= cartProduct.quantity) {
+      // Resta el stock del producto y agrega el producto a la compra
+      product.stock -= cartProduct.quantity;
+      await product.save();
+      purchaseItems.push({ title: product.title, price: product.price, quantity: cartProduct.quantity });
+    } else {
+      // Agrega el producto a la lista de productos que no se pudieron comprar
+      failedProducts.push(cartProduct);
+    }
+  }
+
+  return { purchaseItems, failedProducts };
+}
+
+
+/*
 export const cartPurchase = async (req, res) => {
   const { cid } = req.params;
   try {
+
+    if (!mongoose.Types.ObjectId.isValid(cid)) {
+      res.status(404).send({ error: `Error: el formato cid del carrito no es válido`}) 
+      } 
       const cart = await cartModel.findById(cid);
-      const products = await productModel.find();
+      const products = await productsModel.find();
   
       if (cart) {
           const user = await userModel.findOne({ cart: cart._id });
@@ -237,3 +311,42 @@ export const cartPurchase = async (req, res) => {
       res.status(500).send({ error: `Error al procesar la compra: ${error}` });
   }
 };
+*/
+/*
+export const cartPurchase = async (req, res) => {
+	const { cid } = req.params;
+	try {
+    if (!mongoose.Types.ObjectId.isValid(cid)) {
+      res.status(404).send({ error: `Error: el formato cid del carrito no es válido`}) 
+      } 
+		const cart = await cartModel.findById(cid);
+		const products = await productsModel.find();
+
+		if (cart) {
+			const user = await userModel.find({ cart: cart._id });
+			const email = user[0].email;
+			let amount = 0;
+			const purchaseItems = [];
+			cart.products.forEach(async item => {
+				const product = products.find(prod => prod._id == item.id_prod.toString());
+				if (product.stock >= item.quantity) {
+					amount += product.price * item.quantity;
+					product.stock -= item.quantity;
+					await product.save();
+					purchaseItems.push(product.title);
+				}
+				//ticket?info=${amount}
+			});
+
+			await cartModel.findByIdAndUpdate(cid, { products: [] });
+			res.redirect(
+				`http://localhost:8080/api/tickets/?amount=${amount}&email=${email}`
+			);
+		} else {
+			res.status(404).send({ resultado: 'Not Found cart'});
+		}
+	} catch (error) {
+		res.status(500).send({ error: `Error del servidor en cartPurchase: ${error}` });
+	}
+};
+*/

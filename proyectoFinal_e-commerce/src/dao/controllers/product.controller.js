@@ -41,6 +41,8 @@ export const getProduct = async (req, res) => {
 
 export const postProduct = async (req, res) => {
 
+    
+
     const { title, description, code, price, stock, category } = req.body
 
     try {

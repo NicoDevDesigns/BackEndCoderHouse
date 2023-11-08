@@ -2,7 +2,7 @@ import { Router } from "express";
 //import productModel from "../models/products.models.js";
 import ProductManager from "../dao/controllers/productManagerMongo.js"
 //import { authenticate } from "passport";
-import {passportError,authorization} from "../utils/messageErrors.js"
+import {passportError,authorization} from "../../utils/messageErrors.js"
 
 const productManager=new ProductManager()
 const productRouter = Router()
