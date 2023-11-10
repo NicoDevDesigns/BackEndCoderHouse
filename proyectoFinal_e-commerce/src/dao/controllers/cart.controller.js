@@ -77,7 +77,7 @@ export const postCartProduct = async (req, res) => {
         res.status(404).send({ error: `Error!`, message:addNewProductCart })  
       }
        }catch(error){
-        console.error("Error en cartRouter post:", error);
+        //console.error("Error en cartRouter post:", error);
         res.status(500).send({ error: "Error interno del servidor" });
        }
 }
