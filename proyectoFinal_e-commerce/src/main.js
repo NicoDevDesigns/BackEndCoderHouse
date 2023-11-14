@@ -8,8 +8,8 @@ import { Server } from 'socket.io'
 import { __dirname } from './path.js'
 import path from 'path'
 import mongoose from 'mongoose'
-import ProductManagerMongo from "./dao/controllers/managerMongo/productManagerMongo.js"
-import MessagesManager from "./dao/controllers/managerMongo/messageManagerMongo.js";
+import ProductManagerMongo from "./controllers/managerMongo/productManagerMongo.js"
+import MessagesManager from "./controllers/managerMongo/messageManagerMongo.js";
 import router from './routes/main.routes.js'
 import cookieParser from 'cookie-parser'
 import FileStorage from 'session-file-store'

@@ -1,7 +1,7 @@
 import {productsModel} from '../models/products.models.js'
-import CustomError from '../../services/errors/CustomError.js';
-import EErrors from '../../services/errors/enums.js';
-import { generateProductErrorInfo } from '../../services/errors/info.js';
+import CustomError from '../services/errors/CustomError.js';
+import EErrors from '../services/errors/enums.js';
+import { generateProductErrorInfo } from '../services/errors/info.js';
 
 export const getProducts = async (req, res) => {
     const { limit, page, filter, sort } = req.query

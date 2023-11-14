@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import {getTickets, postTicket} from '../dao/controllers/tickets.controller.js'
+import {getTickets, postTicket} from '../controllers/tickets.controller.js'
      
 
 const routerTicket = Router();

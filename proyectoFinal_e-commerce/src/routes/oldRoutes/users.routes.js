@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { userModel } from "../dao/models/users.models.js";
-import { createHash } from "../utils/bcrypt.js";
-import CustomError from "../services/errors/CustomError.js";
-import EErrors from "../services/errors/enums.js";
-import { generateUserErrorInfo } from "../services/errors/info.js";
+import { userModel } from "../../models/users.models.js";
+import { createHash } from "../../utils/bcrypt.js";
+import CustomError from "../../services/errors/CustomError.js";
+import EErrors from "../../services/errors/enums.js";
+import { generateUserErrorInfo } from "../../services/errors/info.js";
 
 
 const userRouter = Router()

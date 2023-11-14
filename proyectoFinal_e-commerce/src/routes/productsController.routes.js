@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { getProducts, getProduct, postProduct, putProduct, deleteProduct } from "../dao/controllers/product.controller.js";
+import { getProducts, getProduct, postProduct, putProduct, deleteProduct } from "../controllers/product.controller.js";
 import { passportError, authorization } from "../utils/messageErrors.js";
-import { createRandomProducts } from "../dao/controllers/mocking.js";
+import { createRandomProducts } from "../controllers/mocking.js";
 
 const productRouter = Router()
 

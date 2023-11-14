@@ -2,7 +2,7 @@ import { Router } from "express";
 import cartRouter from './cartController.routes.js'
 import productRouter from "./productsController.routes.js";
 import sessionRouter from "./sessions.routes.js";
-import userRouter from "./users.routes.js";
+import userRouter from "./userController.routes.js";
 import routerTicket from "./tickets.routes.js";
 
 const router = Router()

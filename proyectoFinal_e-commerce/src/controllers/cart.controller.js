@@ -2,6 +2,8 @@ import cartModel from "../models/carts.models.js";
 import {productsModel} from "../models/products.models.js"
 import { userModel } from "../models/users.models.js";
 import mongoose from 'mongoose';
+import { logger } from '../utils/logger.js';
+
 
 export const getCarts = async (req, res) => {
     try {
@@ -12,6 +14,8 @@ export const getCarts = async (req, res) => {
           res.status(404).send({ error: `Not found carts`,message: showAllCarts })  
         }
       } catch (error) {
+        logger.error(`[ERROR][${new Date().tolocaleDateString()} - ${new Date().tolocaleTimeString()}] Ha ocurrido un error: ${error.message}`
+        );
         console.error("Error en cartRouter get:", error);
         res.status(500).send({ error: "Error interno del servidor" });
       }
