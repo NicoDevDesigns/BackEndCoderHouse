@@ -10,7 +10,6 @@ export const getProducts = async (req, res) => {
     const pag = page ? page : 1
     const lim = limit ? limit : 10
     const ord = sort == 'asc' ? 1 : -1
-    console.log(fil)
     try {
         const products = await productsModel.paginate({ category: fil }, { limit: lim, page: pag, sort: { price: ord } })
 
@@ -51,12 +50,14 @@ export const postProduct = async (req, res) => {
     try {
 
         if(!title || !code || !price || !stock){
-            CustomError.createError({
+            const error = CustomError.createError({
                 name: "Product creation error",
                 cause: generateProductErrorInfo(title, code, price, stock),
                 message: "Error trying to create product",
                 code: EErrors.INVALID_TYPES_ERROR
-            })
+            });
+            res.status(400).send({ error });
+            return;
         }
 
         const product = await productsModel.create({ title, code, price, stock })

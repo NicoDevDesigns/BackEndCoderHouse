@@ -14,9 +14,7 @@ export const getCarts = async (req, res) => {
           res.status(404).send({ error: `Not found carts`,message: showAllCarts })  
         }
       } catch (error) {
-        logger.error(`[ERROR][${new Date().tolocaleDateString()} - ${new Date().tolocaleTimeString()}] Ha ocurrido un error: ${error.message}`
-        );
-        console.error("Error en cartRouter get:", error);
+        //logger.error(`[ERROR][${new Date().tolocaleDateString()} - ${new Date().tolocaleTimeString()}] Ha ocurrido un error: ${error.message}`);
         res.status(500).send({ error: "Error interno del servidor" });
       }
 }
@@ -36,7 +34,7 @@ export const getCart = async (req, res) => {
       res.status(404).send({ error: `Error`, message: showCart })  
     }
       }catch(error){
-      console.error("Error en cartRouter get:", error);
+
       res.status(500).send({ error: "Error interno del servidor" });
     }
 }
@@ -50,7 +48,7 @@ export const postCart = async (req, res) => {
       res.status(404).send({ error: `don't create cart!` })  
     }
   } catch (error) {
-    console.error("Error en cartRouter post:", error);
+
     res.status(500).send({ error: "Error interno del servidor" });
   }
 }
@@ -81,7 +79,7 @@ export const postCartProduct = async (req, res) => {
         res.status(404).send({ error: `Error!`, message:addNewProductCart })  
       }
        }catch(error){
-        //console.error("Error en cartRouter post:", error);
+
         res.status(500).send({ error: "Error interno del servidor" });
        }
 }
@@ -99,7 +97,6 @@ export const deleteCart = async (req, res) => {
            res.status(404).send({ error: `Error`,menssage: cartDelete })  
         }
       }catch(error){
-        console.error("Error en deleteCart:", error);
         res.status(500).send({ error: "Error interno del servidor" });
       }
 }
@@ -129,7 +126,7 @@ export const deleteCartProduct = async (req, res) => {
       res.status(404).send({ resultado:"Error: No se encontró el carrito"});
     }
     } catch (error) {
-      console.error("Error en cartRouter delete:", error);
+
       res.status(500).send({ error: "Error interno del servidor" });
     }
 }
@@ -149,7 +146,6 @@ export const deleteCartAllProducts = async (req, res) => {
         res.status(404).send({ error: `Error: El carrito no existe`})
          }
   }catch(error){
-    //console.error("Error en deleteCartAllProducts:", error);
     res.status(500).send({ msg: "Error en deleteCartAllProducts", error: "Error interno del servidor" });
   }
 }
@@ -178,7 +174,7 @@ export const putCart = async (req, res)=>{
       res.status(404).send({ error: `Error`,message: updateCartProducts })  
     }
      }catch(error){
-      console.error("Error en cartRouter put:", error);
+
       res.status(500).send({ error: "Error interno del servidor" });
      }
 }
@@ -206,7 +202,7 @@ export const putCartProduct = async (req, res) => {
       res.status(404).send({ error: `Error`, message: updateProduct })  
     }
      }catch(error){
-      console.error("Error en cartRouter put:", error);
+
       res.status(500).send({ error: "Error interno del servidor" });
      }
 }

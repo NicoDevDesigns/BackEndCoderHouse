@@ -16,11 +16,9 @@ const ExtractJWT = jwt.ExtractJwt //Extractor de los headers de la consulta
 const initializePassport = () => {
 
     const cookieExtractor = req => {
-        console.log(req.cookies)
         //{} no hay cookies != no exista mi cookie
         //Si existen cookies, consulte por mi cookie y sino asigno {}
         const token = req.headers.authorization ? req.headers.authorization : {}
-        console.log(token)
         return token
     }
 
@@ -29,7 +27,6 @@ const initializePassport = () => {
         secretOrKey: process.env.JWT_SECRET
     }, async (jwt_payload, done) => {
         try {
-            console.log(jwt_payload)
             return done(null, jwt_payload) //Retorno el contenido del token
         } catch (error) {
             return done(error)
@@ -58,9 +55,7 @@ const initializePassport = () => {
                     age: age,
                     password: passwordHash
                 })
-                console.log(userCreated)
                 return done(null, userCreated)
-
             } catch (error) {
                 return done(error)
             }
@@ -95,9 +90,6 @@ const initializePassport = () => {
     }, async (accessToken, refreshToken, profile, done) => {
 
         try {
-            console.log(accessToken)
-            console.log(refreshToken)
-            console.log(process.env.CALLBACK_URL)
             const user = await userModel.findOne({ email: profile._json.email })
             if (!user) {
                 const userCreated = await userModel.create({

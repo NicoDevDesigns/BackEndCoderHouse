@@ -63,7 +63,7 @@ sessionRouter.get('/logout', (req, res) => {
     if (req.session){
         req.session.destroy()
     }
-    //console.log(req.session)
+
     //res.redirect('http://localhost:8080/static/login'); 
     res.clearCookie('jwtCookie')
     res.status(200).send({ resultado: 'Login eliminado' })

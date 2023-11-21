@@ -30,7 +30,6 @@ mongoose.connect(config.mongoURL)
     .then(async() => {console.log("BDD conectada")
         //await cartModel.create({})
         //const resultado = await cartModel.findOne({_id:"6506ff427b83ee72898cfcae"}).populate('products.id_prod')
-        //console.log(JSON.stringify(resultado))
         }
     )
     .catch((error) => console.log("Error en conexion con MongoDB ATLAS: ", error))
@@ -140,7 +139,6 @@ io.on("connection",async(socket)=>{
     });
 
     socket.on("deleteProduct",async(id)=>{
-        console.log(id)
        await productManagerSocket.deleteProduct(id)
        const Productos =await productManagerSocket.getProductsAll()
        socket.emit("envioProductos", Productos)
