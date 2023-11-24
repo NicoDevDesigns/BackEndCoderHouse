@@ -39,10 +39,10 @@ userRouter.post('/reset-password/:token', (req, res) => {
         if (linkData && Date.now() - linkData.timestamp <= 3600000) {
             const { email } = linkData
 
-            console.log(email)
+           /* console.log(email)
             console.log(newPassword)
             console.log(oldPassword)
-
+*/
             //Cambio de contraseña (modificar cliente)
 
             //Consulto si la nueva contraseña es distinta a la antigua

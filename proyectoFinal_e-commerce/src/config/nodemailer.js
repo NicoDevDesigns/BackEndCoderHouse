@@ -5,8 +5,8 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth: {
-        user: 'franciscopugh3@gmail.com',
-        pass: ' mmbs wkol upwo qyfz',
+        user: 'sancheznicolasalejandro@gmail.com',
+        pass: ' 1234',
         authMethod: 'LOGIN'
     }
 })
@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 
 export const sendRecoveryEmail = (email, recoveryLink) => {
     const mailOptions = {
-        from: 'franciscopugh3@gmail.com',
+        from: 'sancheznicolasalejandro@gmail.com',
         to: email,
         subject: 'Link de recuperacion de su contraseña',
         text: `Por favor haz click en el siguiente enlace ${recoveryLink}`
