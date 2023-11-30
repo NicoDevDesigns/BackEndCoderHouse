@@ -12,4 +12,5 @@ productRouter.put('/:id', passportError('jwt'), authorization('Admin'), putProdu
 productRouter.delete('/:id', passportError('jwt'), authorization('Admin'), deleteProduct)
 productRouter.post('/mockingProducts', createRandomProducts);
 
-export default productRouter
+export default productRouter   
+ 

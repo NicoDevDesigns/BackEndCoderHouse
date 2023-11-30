@@ -16,6 +16,8 @@ import FileStorage from 'session-file-store'
 import passport from 'passport'
 import initializePassport from './config/passport.js'
 import config from "./config.js";
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express'
 
 const app = express()
 const fileStorage = FileStorage(session)
@@ -80,6 +82,26 @@ app.use(passport.session())
 //Routes
 app.use('/',router)
 app.use('/static', express.static(path.join(__dirname, '/public'))) //path.join() es una concatenacion de una manera mas optima que con el +
+
+//Documentacion
+const swaggerOptions = {
+    definition: {
+        openapi: '3.1.0',
+        info: {
+            title: 'Documentacion del curso de Backend',
+            decription: 'API Coderhouse Backend'
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
+
+//** cualquier subcarpeta 
+//* cualquier nombre de archivo
+ 
+const specs = swaggerJSDoc(swaggerOptions)
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))  
+
+
 
 
 // Renderizar la vista "realTimeProducts.handlebars" con el formulario para agregar productos

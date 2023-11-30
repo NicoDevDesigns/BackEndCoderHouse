@@ -9,7 +9,7 @@ export const getCarts = async (req, res) => {
     try {
         const showAllCarts = await cartModel.find();
         if(showAllCarts){
-          res.status(200).send({ resultado: 'Ok', message: showAllCarts })
+          res.status(200).send({ resultado: 'Ok..All carts', message: showAllCarts })
         }else{
           res.status(404).send({ error: `Not found carts`,message: showAllCarts })  
         }
@@ -222,7 +222,9 @@ export const cartPurchase = async (req, res) => {
       return res.status(404).send({ resultado: 'Not Found cart' });
     }
 
+
     const email = await getEmailFromCart(cart);
+    const rol = await getUserFromCart(cart)
     const { purchaseItems, failedProducts } = await processCartPurchase(cart.products, products);
 
     // Actualiza el carrito con los productos que no se pudieron comprar
@@ -230,6 +232,9 @@ export const cartPurchase = async (req, res) => {
 
     // Genera un ticket con los datos de la compra
     const amount = purchaseItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    if (rol === 'premium') {
+      amount *= 0.7;
+    }
     // Llama al servicio de Tickets para generar el ticket con amount y email
 
     res.redirect(`http://localhost:8080/api/tickets/?amount=${amount}&email=${email}`);
@@ -241,6 +246,10 @@ export const cartPurchase = async (req, res) => {
 async function getEmailFromCart(cart) {
   const user = await userModel.findOne({ cart: cart._id });
   return user.email;
+}
+async function getUserFromCart(cart) {
+  const user = await userModel.findOne({ cart: cart._id });
+  return user.rol;
 }
 
 async function processCartPurchase(cartProducts, allProducts) {

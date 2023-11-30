@@ -4,21 +4,38 @@ import EErrors from '../services/errors/enums.js';
 import { generateProductErrorInfo } from '../services/errors/info.js';
 
 export const getProducts = async (req, res) => {
-    const { limit, page, filter, sort } = req.query
 
-    const fil = filter ? filter : {}
-    const pag = page ? page : 1
-    const lim = limit ? limit : 10
-    const ord = sort == 'asc' ? 1 : -1
+    const { limit = 10, page = 1, sort, category, status } = req.query
+    const sortOption = sort === 'asc' ? 'price' : sort === 'desc' ? '-price' : null;
+    const query = {};
+    if (category) query.category = category;
+    if (status) query.status = status
+
     try {
-        const products = await productsModel.paginate({ category: fil }, { limit: lim, page: pag, sort: { price: ord } })
+              // Validar el argumento 'limit'
+              if (isNaN(limit) || parseInt(limit) <= 0) {
+                return "Error: 'limit' debe ser un número positivo.";
+              }
 
-        if (products) {
-            return res.status(200).send(products)
-        }
+              // Validar el argumento 'page'
+              if (isNaN(page) || parseInt(page) <= 0) {
+                return "Error: 'page' debe ser un número positivo.";
+              }
 
-        res.status(404).send({ error: "Productos no encontrados" })
+              // Validar el argumento 'sortOption'
+              if (sortOption !== 'price' && sortOption !== '-price' && sortOption !== null) {
+                return "Error: 'sort' debe ser 'asc', 'desc' o null.";
+              }
 
+              const products = await productsModel.paginate(query, { limit, page, sort: sortOption });
+
+              if (products) {
+                return res.status(200).send(products)
+             }
+    
+            res.status(404).send({ error: "Productos no encontrados" })
+        
+        
     } catch (error) {
         res.status(500).send({ error: `Error en consultar productos ${error}` })
     }
