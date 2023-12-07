@@ -6,7 +6,7 @@ const routerTicket = Router();
 //http://localhost:8080/api/tickets/
 routerTicket.get('/', getTickets);
 //http://localhost:8080/api/tickets/?amount=38&email=Nico@gmail.com
-routerTicket.post('/', postTicket);
+routerTicket.get('/create', postTicket);
 
 
 export default routerTicket;

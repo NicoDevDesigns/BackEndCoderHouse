@@ -77,7 +77,7 @@ export const postProduct = async (req, res) => {
             return;
         }
 
-        const product = await productsModel.create({ title, code, price, stock })
+        const product = await productsModel.create({ title, description, code, price, stock, category })
 
         if (product) {
             return res.status(201).send(product)

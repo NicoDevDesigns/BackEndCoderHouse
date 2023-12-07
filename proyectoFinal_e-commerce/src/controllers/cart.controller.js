@@ -237,7 +237,7 @@ export const cartPurchase = async (req, res) => {
     }
     // Llama al servicio de Tickets para generar el ticket con amount y email
 
-    res.redirect(`http://localhost:8080/api/tickets/?amount=${amount}&email=${email}`);
+    res.redirect(`http://localhost:8080/api/tickets/create?amount=${amount}&email=${email}`);
   } catch (error) {
     res.status(500).send({ error: `Error del servidor en cartPurchase: ${error}` });
   }

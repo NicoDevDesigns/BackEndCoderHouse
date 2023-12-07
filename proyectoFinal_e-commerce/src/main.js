@@ -74,7 +74,8 @@ app.use(session({ //Configuracion de la sesion de mi app
     saveUninitialized: true
 }))
 
-initializePassport()
+//Autorizacion y autenticacion
+initializePassport()//Estrategia de autenticacion
 app.use(passport.initialize())
 app.use(passport.session())
 

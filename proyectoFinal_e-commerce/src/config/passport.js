@@ -18,7 +18,7 @@ const initializePassport = () => {
     const cookieExtractor = req => {
         //{} no hay cookies != no exista mi cookie
         //Si existen cookies, consulte por mi cookie y sino asigno {}
-        const token = req.headers.authorization ? req.headers.authorization : {}
+        const token = req.cookies ? req.cookies.jwtCookie : {}
         return token
     }
 
@@ -31,7 +31,6 @@ const initializePassport = () => {
         } catch (error) {
             return done(error)
         }
-
     }))
 
 
