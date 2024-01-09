@@ -7,7 +7,7 @@ import { generateToken } from "../utils/jwt.js";
 
 const sessionRouter = Router()
 
-//Autenticacion
+//Autenticacion 
 sessionRouter.post('/login', passport.authenticate('login'), async (req, res) => {
     try {
         if (!req.user) {
@@ -26,7 +26,7 @@ sessionRouter.post('/login', passport.authenticate('login'), async (req, res) =>
             maxAge: 43200000
         })
 
-        res.status(200).send({ payload: req.user })
+        res.status(200).send({ payload: req.user, valorToken: token })
     } catch (error) {
         res.status(500).send({ mensaje: `Error al iniciar sesion ${error}` })
     }
